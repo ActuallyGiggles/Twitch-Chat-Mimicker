@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -370,74 +371,14 @@ func getFfzChannelEmotes() map[string]int {
 	return c
 }
 
-func GetLiveStatuses() {
-	for i := 0; i < len(Users); i++ {
-		user := &Users[i]
-		url := "https://api.twitch.tv/helix/streams?user_login=" + user.Name
-		var jsonStr = []byte(`{"":""}`)
-		req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
-		req.Header.Set("Authorization", "Bearer "+Config.AccessToken)
-		req.Header.Set("Client-Id", Config.ClientID)
-		if err != nil {
-			log.Println(err.Error())
-		}
-		client := &http.Client{}
-		resp, err := client.Do(req)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		defer resp.Body.Close()
-		body, _ := ioutil.ReadAll(resp.Body)
-		var stream StreamStatusData
-		if err := json.Unmarshal(body, &stream); err != nil {
-			log.Println(err.Error())
-		}
-		if len(stream.Data) == 0 {
-			user.IsLive = false
-		} else {
-			user.IsLive = true
-		}
-	}
-
-	for range time.Tick(1 * time.Minute) {
-		for i := 0; i < len(Users); i++ {
-			user := &Users[i]
-			url := "https://api.twitch.tv/helix/streams?user_login=" + user.Name
-			var jsonStr = []byte(`{"":""}`)
-			req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
-			req.Header.Set("Authorization", "Bearer "+Config.AccessToken)
-			req.Header.Set("Client-Id", Config.ClientID)
-			if err != nil {
-				log.Println(err.Error())
-			}
-			client := &http.Client{}
-			resp, err := client.Do(req)
-			if err != nil {
-				log.Println(err.Error())
-				return
-			}
-			defer resp.Body.Close()
-			body, _ := ioutil.ReadAll(resp.Body)
-			var stream StreamStatusData
-			if err := json.Unmarshal(body, &stream); err != nil {
-				log.Println(err.Error())
-			}
-			if len(stream.Data) == 0 {
-				user.IsLive = false
-			} else {
-				user.IsLive = true
-			}
-		}
-	}
-}
-
 // func GetLiveStatuses() {
 // 	for i := 0; i < len(Users); i++ {
 // 		user := &Users[i]
-// 		url := "https://decapi.me/twitch/uptime/" + user.Name
+// 		url := "https://api.twitch.tv/helix/streams?user_login=" + user.Name
 // 		var jsonStr = []byte(`{"":""}`)
 // 		req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
+// 		req.Header.Set("Authorization", "Bearer "+Config.AccessToken)
+// 		req.Header.Set("Client-Id", Config.ClientID)
 // 		if err != nil {
 // 			log.Println(err.Error())
 // 		}
@@ -449,10 +390,70 @@ func GetLiveStatuses() {
 // 		}
 // 		defer resp.Body.Close()
 // 		body, _ := ioutil.ReadAll(resp.Body)
-// 		if strings.Contains(string(body), "offline") {
+// 		var stream StreamStatusData
+// 		if err := json.Unmarshal(body, &stream); err != nil {
+// 			log.Println(err.Error())
+// 		}
+// 		if len(stream.Data) == 0 {
 // 			user.IsLive = false
 // 		} else {
 // 			user.IsLive = true
 // 		}
 // 	}
+
+// 	for range time.Tick(1 * time.Minute) {
+// 		for i := 0; i < len(Users); i++ {
+// 			user := &Users[i]
+// 			url := "https://api.twitch.tv/helix/streams?user_login=" + user.Name
+// 			var jsonStr = []byte(`{"":""}`)
+// 			req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
+// 			req.Header.Set("Authorization", "Bearer "+Config.AccessToken)
+// 			req.Header.Set("Client-Id", Config.ClientID)
+// 			if err != nil {
+// 				log.Println(err.Error())
+// 			}
+// 			client := &http.Client{}
+// 			resp, err := client.Do(req)
+// 			if err != nil {
+// 				log.Println(err.Error())
+// 				return
+// 			}
+// 			defer resp.Body.Close()
+// 			body, _ := ioutil.ReadAll(resp.Body)
+// 			var stream StreamStatusData
+// 			if err := json.Unmarshal(body, &stream); err != nil {
+// 				log.Println(err.Error())
+// 			}
+// 			if len(stream.Data) == 0 {
+// 				user.IsLive = false
+// 			} else {
+// 				user.IsLive = true
+// 			}
+// 		}
+// 	}
 // }
+
+func GetLiveStatuses() {
+	for i := 0; i < len(Users); i++ {
+		user := &Users[i]
+		url := "https://decapi.me/twitch/uptime/" + user.Name
+		var jsonStr = []byte(`{"":""}`)
+		req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
+		if err != nil {
+			log.Println(err.Error())
+		}
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		defer resp.Body.Close()
+		body, _ := ioutil.ReadAll(resp.Body)
+		if strings.Contains(string(body), "offline") {
+			user.IsLive = false
+		} else {
+			user.IsLive = true
+		}
+	}
+}

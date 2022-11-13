@@ -19,6 +19,7 @@ messageRange:
 		for i := 0; i < len(Users); i++ {
 			user := &Users[i]
 			if user.Name == u {
+
 				if user.Busy || !user.IsLive {
 					continue messageRange
 				}
@@ -46,11 +47,11 @@ messageRange:
 				if len(user.Emotes) == 2 {
 					user.Emotes = append(user.Emotes, e)
 					if user.Emotes[0] == user.Emotes[1] && (user.Emotes[0] != "" || user.Emotes[1] != "") {
-						go Respond(u, user.Emotes[0])
+						go Respond(user, user.Emotes[0])
 					} else if user.Emotes[1] == user.Emotes[2] && (user.Emotes[1] != "" || user.Emotes[2] != "") {
-						go Respond(u, user.Emotes[1])
+						go Respond(user, user.Emotes[1])
 					} else if user.Emotes[0] == user.Emotes[2] && (user.Emotes[1] != "" || user.Emotes[2] != "") {
-						go Respond(u, user.Emotes[2])
+						go Respond(user, user.Emotes[2])
 					}
 
 					user.Emotes = nil
@@ -95,25 +96,20 @@ loop1:
 	return eJ
 }
 
-func Respond(channel string, message string) {
-	for i := 0; i < len(Users); i++ {
-		user := &Users[i]
-		if user.Name == channel {
-			user.Busy = true
-			go func() {
-				if Config.IntervalMin == Config.IntervalMax {
-					time.Sleep(time.Duration(Config.IntervalMin) * time.Minute)
-					user.Busy = false
-				} else {
-					time.Sleep(time.Duration(RandomNumber(Config.IntervalMin, Config.IntervalMax)) * time.Minute)
-					user.Busy = false
-				}
-			}()
-
-			fmt.Printf("[Said In %s]: %s\n", channel, message)
-
-			time.Sleep(time.Duration(RandomNumber(2, 10)) * time.Second)
-			Say(channel, message)
+func Respond(u *User, message string) {
+	u.Busy = true
+	go func() {
+		if Config.IntervalMin == Config.IntervalMax {
+			time.Sleep(time.Duration(Config.IntervalMin) * time.Minute)
+			u.Busy = false
+		} else {
+			time.Sleep(time.Duration(RandomNumber(Config.IntervalMin, Config.IntervalMax)) * time.Minute)
+			u.Busy = false
 		}
-	}
+	}()
+
+	fmt.Printf("[Said In %s]: %s\n", u.Name, message)
+
+	time.Sleep(time.Duration(RandomNumber(2, 10)) * time.Second)
+	Say(u.Name, message)
 }
