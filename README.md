@@ -14,3 +14,4 @@ Things the `.exe` will do:
 4. Set the interval range to use between messages.
 
 Important note: Responses are randomly delayed between 2-10 seconds of finding an emote to mimic.
+Important note 2: If you would like to change any of the settings you set after first run, simply open the `config.json` and change them there. :)
