@@ -3,7 +3,7 @@ Do you like to game/code/do other dubious deeds while watching a Twitch stream? 
 
 Well, suffer no more. With the Twitch Auto Chatter (I like to call it a Mimic), you can participate with chat in telling the streamer just how bad they are at the game while you occupy your hands with... more pleasant things.
 
-### INSTRUCTIONS
+### __INSTRUCTIONS__:
 If you are NOT a developer, or aren't willing to learn Go, simply download the `mimic.exe` file and run it.
 
 Things the `.exe` will do:
