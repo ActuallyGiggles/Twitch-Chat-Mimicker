@@ -17,5 +17,5 @@ Important note: Responses are randomly delayed between 2-10 seconds of finding a
 Important note 2: If you would like to change any of the settings you set after first run, simply open the `config.json` and change them there. :)
 Important note 3: Is only active when channel is live.
 
-![](https://i.imgur.com/d1VKDkr.png)
-![](https://i.imgur.com/Q5zOigB.png)
+![](https://i.imgur.com/CxjRWOL.png)
+![](https://i.imgur.com/rJ9QxFm.png)
