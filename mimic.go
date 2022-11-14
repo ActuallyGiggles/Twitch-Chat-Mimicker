@@ -123,6 +123,7 @@ func Respond(u *User, message string) {
 			fmt.Println("Waiting", r, "minutes to start detecting again...")
 			time.Sleep(time.Duration(r) * time.Minute)
 			u.Busy = false
+			clearTerminal()
 		}
 	}()
 }
