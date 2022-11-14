@@ -45,6 +45,7 @@ func getEmotes() {
 		fmt.Println("\t\tBTTV:", BChannel[channel])
 		fmt.Println("\t\tFFZ:", FChannel[channel])
 	}
+	fmt.Println()
 
 	go func() {
 		for range time.Tick(1 * time.Hour) {

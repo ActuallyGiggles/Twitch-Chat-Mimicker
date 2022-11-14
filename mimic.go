@@ -33,7 +33,7 @@ messageRange:
 						exists = true
 						emote.Value++
 
-						fmt.Printf("\nEmotes detected in %s: %v\n", user.Name, user.Emotes)
+						printDetectedEmotes(user)
 					}
 
 					if emote.Value >= Config.MessageThreshold {
@@ -51,7 +51,7 @@ messageRange:
 					}
 					user.Emotes = append(user.Emotes, entry)
 
-					fmt.Printf("\nEmotes detected in %s: %v\n", user.Name, user.Emotes)
+					printDetectedEmotes(user)
 				}
 
 				user.Messages++
@@ -62,6 +62,13 @@ messageRange:
 				}
 			}
 		}
+	}
+}
+
+func printDetectedEmotes(user *User) {
+	fmt.Printf("Emotes detected in %s:\n", user.Name)
+	for _, emoticon := range user.Emotes {
+		fmt.Printf("\t%s: %d/%d\n", emoticon.Name, emoticon.Value, Config.MessageThreshold)
 	}
 }
 
@@ -106,6 +113,8 @@ func Respond(u *User, message string) {
 	fmt.Printf("Saying %s in %s's chat in %d seconds.\n", message, u.Name, rS)
 	time.Sleep(time.Duration(rS) * time.Second)
 	Say(u.Name, message)
+	clearTerminal()
+	fmt.Printf("Said %s in %s's chat.\n", message, u.Name)
 
 	if Config.IntervalMin == Config.IntervalMax {
 		fmt.Println("Waiting", Config.IntervalMin, "minutes to start detecting again...")
@@ -116,6 +125,5 @@ func Respond(u *User, message string) {
 		fmt.Println("Waiting", r, "minutes to start detecting again...")
 		time.Sleep(time.Duration(r) * time.Minute)
 		u.Busy = false
-		clearTerminal()
 	}
 }
