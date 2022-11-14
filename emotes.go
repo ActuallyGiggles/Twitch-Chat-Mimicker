@@ -55,7 +55,7 @@ func getEmotes() {
 
 func updateEmotes() {
 	updatingEmotes = true
-	Emotes = nil
+	ChannelEmotes = nil
 	getTwitchChannelEmotes()
 	get7tvChannelEmotes()
 	getBttvChannelEmotes()
@@ -83,6 +83,9 @@ func GetBroadcasters() {
 		}
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
+		if resp.StatusCode != 200 {
+			panic(fmt.Sprintf("Status Code is not 200 for GetBroadcasters(%s). Body:\n%s", user.Name, string(body)))
+		}
 		broadcaster := Broadcaster[Data]{}
 		if err := json.Unmarshal(body, &broadcaster); err != nil {
 			log.Println("GetBroadcasterID failed\n", err.Error())
@@ -157,7 +160,7 @@ func getTwitchChannelEmotes() map[string]int {
 		var number int
 
 		for _, emote := range emotes.Data {
-			Emotes = append(Emotes, emote.Name)
+			ChannelEmotes = append(ChannelEmotes, emote.Name)
 			number++
 		}
 
@@ -224,7 +227,7 @@ func get7tvChannelEmotes() map[string]int {
 		var number int
 
 		for _, emote := range emotes {
-			Emotes = append(Emotes, emote.Name)
+			ChannelEmotes = append(ChannelEmotes, emote.Name)
 			number++
 		}
 
@@ -289,11 +292,11 @@ func getBttvChannelEmotes() map[string]int {
 		var number int
 
 		for _, emote := range emotes.ChannelEmotes {
-			Emotes = append(Emotes, emote.Name)
+			ChannelEmotes = append(ChannelEmotes, emote.Name)
 			number++
 		}
 		for _, emote := range emotes.SharedEmotes {
-			Emotes = append(Emotes, emote.Name)
+			ChannelEmotes = append(ChannelEmotes, emote.Name)
 			number++
 		}
 		c[user.Name] = number
@@ -361,7 +364,7 @@ func getFfzChannelEmotes() map[string]int {
 
 		for _, emotes := range set.Sets {
 			for _, emote := range emotes.Emoticons {
-				Emotes = append(Emotes, emote.Name)
+				ChannelEmotes = append(ChannelEmotes, emote.Name)
 				number++
 			}
 		}

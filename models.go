@@ -1,22 +1,33 @@
 package main
 
 type Configuration struct {
-	Name            string
-	OAuth           string
-	ClientID        string
-	AccessToken     string
-	IntervalMin     int
-	IntervalMax     int
+	Name        string
+	OAuth       string
+	ClientID    string
+	AccessToken string
+
+	IntervalMin int
+	IntervalMax int
+
+	MessageThreshold int
+	MessageSample    int
+
 	Channels        []string
 	BlacklistEmotes []string
 }
 
 type User struct {
-	Name   string
-	ID     string
-	IsLive bool
-	Busy   bool
-	Emotes []string
+	Name     string
+	ID       string
+	IsLive   bool
+	Busy     bool
+	Messages int
+	Emotes   []Emote
+}
+
+type Emote struct {
+	Name  string
+	Value int
 }
 
 type Broadcaster[T any] struct {

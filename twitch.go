@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v3"
@@ -33,9 +31,7 @@ func Start(in chan Message) {
 	}
 
 	time.Sleep(5 * time.Second)
-	cmd := exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	clearTerminal()
 
 	fmt.Print("Active.\n\n")
 

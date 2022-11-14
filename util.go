@@ -69,17 +69,13 @@ func writeConfig() {
 
 func configSetup() {
 	// Intro
-	cmd := exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	clearTerminal()
 	fmt.Println("First time? Let's setup your bot.")
 	fmt.Println()
 	fmt.Println("Press Enter...")
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
-	cmd = exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	clearTerminal()
 
 	// Name
 	fmt.Println("First, what is the login name of the account you are going to use?")
@@ -89,9 +85,7 @@ func configSetup() {
 	scanner.Scan()
 	name := strings.ToLower(scanner.Text())
 	Config.Name = name
-	cmd = exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	clearTerminal()
 
 	// OAuth
 	fmt.Println("Let's generate an OAuth. Go to this website (https://twitchapps.com/tmi/), and paste the result here.")
@@ -100,10 +94,8 @@ func configSetup() {
 	scanner = bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	oauth := scanner.Text()
-	Config.OAuth = oauth
-	cmd = exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	Config.OAuth = "oauth:" + strings.TrimPrefix(oauth, "oauth:")
+	clearTerminal()
 
 	// Client ID
 	fmt.Println("Now let's get your Client ID, it can be found here: (https://dev.twitch.tv/console). \n\nSteps:\n1. Give your application a name.\n2. Set the redirect URL to (https://localhost).\n3. Choose the chatbot category.\n4. Copy and paste the Client ID here.")
@@ -113,9 +105,7 @@ func configSetup() {
 	scanner.Scan()
 	clientID := scanner.Text()
 	Config.ClientID = clientID
-	cmd = exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	clearTerminal()
 
 	// Access Token
 	fmt.Println("It's time to get your Access Token, it can be found here (https://twitchtokengenerator.com/). \n\nSteps:\n1. Select 'Bot Chat Token'.\n2. Click 'Authorize'.\n3. Copy and paste the Access Token here.")
@@ -125,9 +115,7 @@ func configSetup() {
 	scanner.Scan()
 	accessToken := scanner.Text()
 	Config.AccessToken = accessToken
-	cmd = exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	clearTerminal()
 
 	// Channels
 	fmt.Println(`Now list the channels that you want your bot to be active in. (Separate them with spaces.) (Example: "39daph nmplol sodapoppin veibae")`)
@@ -139,9 +127,7 @@ func configSetup() {
 	for _, channel := range strings.Split(channels, " ") {
 		Config.Channels = append(Config.Channels, channel)
 	}
-	cmd = exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	clearTerminal()
 
 	// Blacklisted Emotes
 	fmt.Println(`Enter the emotes that you want to be blacklisted. (Separate them with spaces.) (Example: "TriHard KEKW ResidentSleeper")`)
@@ -153,9 +139,37 @@ func configSetup() {
 	for _, blacked := range strings.Split(blacklist, " ") {
 		Config.BlacklistEmotes = append(Config.BlacklistEmotes, blacked)
 	}
-	cmd = exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	clearTerminal()
+
+	// Message Sample
+	fmt.Println("How many messages do you want the bot the sample at a time? (My personal sample: 5)")
+	fmt.Println()
+	fmt.Print("Sample: ")
+	scanner = bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	sample := scanner.Text()
+	s, err := strconv.Atoi(sample)
+	if err != nil {
+		fmt.Println(sample, "is not a number!")
+		os.Exit(3)
+	}
+	Config.MessageSample = s
+	clearTerminal()
+
+	// Message Threshold
+	fmt.Println("Out of that sample size, how many times does an emote have to repeat itself to force your account to send it? (My personal threshold: 3)")
+	fmt.Println()
+	fmt.Print("Threshold: ")
+	scanner = bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	threshold := scanner.Text()
+	t, err := strconv.Atoi(threshold)
+	if err != nil {
+		fmt.Println(threshold, "is not a number!")
+		os.Exit(3)
+	}
+	Config.MessageThreshold = t
+	clearTerminal()
 
 	// Messaging Interval
 	fmt.Println(`Finally, please specify the range of minutes for the bot to wait in between message sends. (Example: "5 10")`)
@@ -165,22 +179,25 @@ func configSetup() {
 	scanner.Scan()
 	interval := scanner.Text()
 	tS := strings.Split(interval, " ")
-
 	min, err := strconv.Atoi(tS[0])
 	if err != nil {
 		fmt.Println(tS[0], "is not a number!")
 		os.Exit(3)
 	}
-
 	max, err := strconv.Atoi(tS[1])
 	if err != nil {
 		fmt.Println(tS[1], "is not a number!")
 		os.Exit(3)
 	}
-
 	Config.IntervalMin = min
 	Config.IntervalMax = max
 	fmt.Println()
 
 	writeConfig()
+}
+
+func clearTerminal() {
+	cmd := exec.Command("cmd", "/c", "cls")
+	cmd.Stdout = os.Stdout
+	cmd.Run()
 }
