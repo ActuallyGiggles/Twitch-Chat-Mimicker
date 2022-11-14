@@ -1,7 +1,7 @@
 # TwitchAutoChatter
 Do you like to game/code/do other dubious deeds while watching a Twitch stream? Do you want to type in the chat, but you're just too busy with your hands?
 
-Well, suffer no more. With the Twitch Auto Chatter (I like to call it a Mimic), you can participate with chat in telling the streamer just how bad they are at the game while you occupy your hands with... more pleasant things.
+Well, suffer no more. With the highly customizable Twitch Auto Chatter (I like to call it a Mimic), you can participate with chat in telling the streamer just how bad they are at the game while you occupy your hands with... more pleasant things.
 
 
 ### INSTRUCTIONS:
