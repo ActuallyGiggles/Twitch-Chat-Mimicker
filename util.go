@@ -87,18 +87,8 @@ func configSetup() {
 	Config.Name = name
 	clearTerminal()
 
-	// OAuth
-	fmt.Println("Let's generate an OAuth. Go to this website (https://twitchapps.com/tmi/), and paste the result here.")
-	fmt.Println()
-	fmt.Print("OAuth: ")
-	scanner = bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	oauth := scanner.Text()
-	Config.OAuth = "oauth:" + strings.TrimPrefix(oauth, "oauth:")
-	clearTerminal()
-
 	// Client ID
-	fmt.Println("Now let's get your Client ID, it can be found here: (https://dev.twitch.tv/console). \n\nSteps:\n1. Give your application a name.\n2. Set the redirect URL to (https://localhost).\n3. Choose the chatbot category.\n4. Copy and paste the Client ID here.")
+	fmt.Println("Now let's get your Client ID, it can be found here after registering your application: (https://dev.twitch.tv/console). \n\nSteps:\n1. Give your application a name.\n2. Set the redirect URL to (https://twitchapps.com/tokengen/).\n3. Choose the chatbot category.\n4. Copy and paste the Client ID here.")
 	fmt.Println()
 	fmt.Print("Client ID: ")
 	scanner = bufio.NewScanner(os.Stdin)
@@ -107,14 +97,14 @@ func configSetup() {
 	Config.ClientID = clientID
 	clearTerminal()
 
-	// Access Token
-	fmt.Println("It's time to get your Access Token, it can be found here (https://twitchtokengenerator.com/). \n\nSteps:\n1. Select 'Bot Chat Token'.\n2. Click 'Authorize'.\n3. Copy and paste the Access Token here.")
+	// OAuth
+	fmt.Println("Let's generate an OAuth. To do that, go to this website (https://twitchapps.com/tokengen/). \n\nSteps:\n1. Paste in the Client ID\n2. For scopes, type in: 'chat:read chat:edit'.\n3. Click connect and copy and paste the OAuth Token here.")
 	fmt.Println()
-	fmt.Print("Access Token: ")
+	fmt.Print("OAuth: ")
 	scanner = bufio.NewScanner(os.Stdin)
 	scanner.Scan()
-	accessToken := scanner.Text()
-	Config.AccessToken = accessToken
+	oauth := scanner.Text()
+	Config.OAuth = oauth
 	clearTerminal()
 
 	// Channels
@@ -142,7 +132,7 @@ func configSetup() {
 	clearTerminal()
 
 	// Message Sample
-	fmt.Println("How many messages do you want the bot the sample at a time? (My personal sample: 5)")
+	fmt.Println("How many messages do you want the bot the sample at a time? (Recommended: 10)")
 	fmt.Println()
 	fmt.Print("Sample: ")
 	scanner = bufio.NewScanner(os.Stdin)
@@ -157,7 +147,7 @@ func configSetup() {
 	clearTerminal()
 
 	// Message Threshold
-	fmt.Println("Out of that sample size, how many times does an emote have to repeat itself to force your account to send it? (My personal threshold: 3)")
+	fmt.Println("Out of that sample size, how many times does an emote have to repeat itself to force your account to send it? (Recommended: 3)")
 	fmt.Println()
 	fmt.Print("Threshold: ")
 	scanner = bufio.NewScanner(os.Stdin)

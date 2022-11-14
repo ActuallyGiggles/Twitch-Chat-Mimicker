@@ -33,14 +33,11 @@ messageRange:
 						exists = true
 						emote.Value++
 
-						fmt.Printf("\nEmotes detected in %s:\n", user.Name)
-						for _, emoticon := range user.Emotes {
-							fmt.Printf("\t%d %s\n", emoticon.Value, emoticon.Name)
-						}
+						fmt.Printf("\nEmotes detected in %s: %v\n", user.Name, user.Emotes)
 					}
 
 					if emote.Value >= Config.MessageThreshold {
-						Respond(user, emote.Name)
+						go Respond(user, emote.Name)
 						user.Messages = 0
 						user.Emotes = nil
 						continue messageRange
@@ -54,10 +51,7 @@ messageRange:
 					}
 					user.Emotes = append(user.Emotes, entry)
 
-					fmt.Printf("\nEmotes detected in %s:\n", user.Name)
-					for _, emoticon := range user.Emotes {
-						fmt.Printf("\t%d %s\n", emoticon.Value, emoticon.Name)
-					}
+					fmt.Printf("\nEmotes detected in %s: %v\n", user.Name, user.Emotes)
 				}
 
 				user.Messages++
@@ -113,17 +107,15 @@ func Respond(u *User, message string) {
 	time.Sleep(time.Duration(rS) * time.Second)
 	Say(u.Name, message)
 
-	go func() {
-		if Config.IntervalMin == Config.IntervalMax {
-			fmt.Println("Waiting", Config.IntervalMin, "minutes to start detecting again...")
-			time.Sleep(time.Duration(Config.IntervalMin) * time.Minute)
-			u.Busy = false
-		} else {
-			r := RandomNumber(Config.IntervalMin, Config.IntervalMax)
-			fmt.Println("Waiting", r, "minutes to start detecting again...")
-			time.Sleep(time.Duration(r) * time.Minute)
-			u.Busy = false
-			clearTerminal()
-		}
-	}()
+	if Config.IntervalMin == Config.IntervalMax {
+		fmt.Println("Waiting", Config.IntervalMin, "minutes to start detecting again...")
+		time.Sleep(time.Duration(Config.IntervalMin) * time.Minute)
+		u.Busy = false
+	} else {
+		r := RandomNumber(Config.IntervalMin, Config.IntervalMax)
+		fmt.Println("Waiting", r, "minutes to start detecting again...")
+		time.Sleep(time.Duration(r) * time.Minute)
+		u.Busy = false
+		clearTerminal()
+	}
 }

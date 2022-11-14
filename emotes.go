@@ -71,7 +71,7 @@ func GetBroadcasters() {
 
 		var jsonStr = []byte(`{"":""}`)
 		req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
-		req.Header.Set("Authorization", "Bearer "+Config.AccessToken)
+		req.Header.Set("Authorization", "Bearer "+Config.OAuth)
 		req.Header.Set("Client-Id", Config.ClientID)
 		if err != nil {
 			log.Println("GetBroadcasterID failed\n", err.Error())
@@ -84,7 +84,7 @@ func GetBroadcasters() {
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if resp.StatusCode != 200 {
-			panic(fmt.Sprintf("Status Code is not 200 for GetBroadcasters(%s). Body:\n%s", user.Name, string(body)))
+			log.Printf("GetBroadcaters(%s) is not OK\n\t%s", user.Name, string(body))
 		}
 		broadcaster := Broadcaster[Data]{}
 		if err := json.Unmarshal(body, &broadcaster); err != nil {
@@ -101,7 +101,7 @@ func getTwitchGlobalEmotes() (number int) {
 
 	var jsonStr = []byte(`{"":""}`)
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
-	req.Header.Set("Authorization", "Bearer "+Config.AccessToken)
+	req.Header.Set("Authorization", "Bearer "+Config.OAuth)
 	req.Header.Set("Client-Id", Config.ClientID)
 	if err != nil {
 		panic(err)
@@ -134,7 +134,7 @@ func getTwitchChannelEmotes() map[string]int {
 
 		var jsonStr = []byte(`{"":""}`)
 		req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
-		req.Header.Set("Authorization", "Bearer "+Config.AccessToken)
+		req.Header.Set("Authorization", "Bearer "+Config.OAuth)
 		req.Header.Set("Client-Id", Config.ClientID)
 		if err != nil {
 			log.Printf("\t getTwitchChannelEmotes failed\n")
@@ -380,7 +380,7 @@ func getFfzChannelEmotes() map[string]int {
 // 		url := "https://api.twitch.tv/helix/streams?user_login=" + user.Name
 // 		var jsonStr = []byte(`{"":""}`)
 // 		req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
-// 		req.Header.Set("Authorization", "Bearer "+Config.AccessToken)
+// 		req.Header.Set("Authorization", "Bearer "+Config.OAuth)
 // 		req.Header.Set("Client-Id", Config.ClientID)
 // 		if err != nil {
 // 			log.Println(err.Error())
@@ -410,7 +410,7 @@ func getFfzChannelEmotes() map[string]int {
 // 			url := "https://api.twitch.tv/helix/streams?user_login=" + user.Name
 // 			var jsonStr = []byte(`{"":""}`)
 // 			req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
-// 			req.Header.Set("Authorization", "Bearer "+Config.AccessToken)
+// 			req.Header.Set("Authorization", "Bearer "+Config.OAuth)
 // 			req.Header.Set("Client-Id", Config.ClientID)
 // 			if err != nil {
 // 				log.Println(err.Error())

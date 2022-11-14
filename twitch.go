@@ -12,7 +12,7 @@ var client *twitch.Client
 // Start creates a twitch client and connects it.
 func Start(in chan Message) {
 	client = &twitch.Client{}
-	client = twitch.NewClient(Config.Name, Config.OAuth)
+	client = twitch.NewClient(Config.Name, "oauth:"+Config.OAuth)
 
 	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		m := Message{

@@ -1,10 +1,9 @@
 package main
 
 type Configuration struct {
-	Name        string
-	OAuth       string
-	ClientID    string
-	AccessToken string
+	Name     string
+	OAuth    string
+	ClientID string
 
 	IntervalMin int
 	IntervalMax int
