@@ -7,7 +7,7 @@ Well, suffer no more. With the highly customizable Twitch Auto Chatter (I like t
 ### INSTRUCTIONS:
 If you are NOT a developer, or aren't willing to learn Go, simply download the `mimic.exe` file and run it.
 
-Things the `.exe` will do:
+Things the `mimic.exe` will do:
 1. Help you get your OAuth, Client ID, Access Token.
 2. Let you join your favorite channels.
 3. Allow you to blacklist emotes.
