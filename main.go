@@ -23,7 +23,7 @@ func main() {
 	readConfig()
 
 	getEmotes()
-	go GetLiveStatuses()
+	go getLiveStatuses()
 
 	C := make(chan Message)
 	go Start(C)

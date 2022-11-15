@@ -12,6 +12,7 @@ import (
 
 var (
 	updatingEmotes bool
+	tempEmotes     []string
 )
 
 func getEmotes() {
@@ -27,7 +28,7 @@ func getEmotes() {
 	SevenChannel := get7tvChannelEmotes()
 	BChannel := getBttvChannelEmotes()
 	FChannel := getFfzChannelEmotes()
-	updatingEmotes = false
+	transferEmotes()
 
 	globals := TGlobal + SevenGlobal + BGlobal + FGlobal
 
@@ -46,22 +47,31 @@ func getEmotes() {
 	}
 	fmt.Println()
 
-	go func() {
-		for range time.Tick(1 * time.Hour) {
-			updateEmotes()
-		}
-	}()
+	go updateEmotes()
 }
 
 func updateEmotes() {
+	for range time.Tick(1 * time.Hour) {
+		fmt.Println("Updating emotes...")
+
+		getTwitchChannelEmotes()
+		get7tvChannelEmotes()
+		getBttvChannelEmotes()
+		getFfzChannelEmotes()
+		transferEmotes()
+
+		fmt.Println("Emotes updated.")
+	}
+}
+
+func transferEmotes() {
 	updatingEmotes = true
 	ChannelEmotes = nil
-	getTwitchChannelEmotes()
-	get7tvChannelEmotes()
-	getBttvChannelEmotes()
-	getFfzChannelEmotes()
+	for _, emote := range tempEmotes {
+		ChannelEmotes = append(ChannelEmotes, emote)
+	}
+	tempEmotes = nil
 	updatingEmotes = false
-	fmt.Println("Emotes updated.")
 }
 
 func GetBroadcasters() {
@@ -73,6 +83,7 @@ func GetBroadcasters() {
 		req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
 		req.Header.Set("Authorization", "Bearer "+Config.OAuth)
 		req.Header.Set("Client-Id", Config.ClientID)
+		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 		if err != nil {
 			log.Println("GetBroadcasterID failed\n", err.Error())
 		}
@@ -103,6 +114,7 @@ func getTwitchGlobalEmotes() (number int) {
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
 	req.Header.Set("Authorization", "Bearer "+Config.OAuth)
 	req.Header.Set("Client-Id", Config.ClientID)
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	if err != nil {
 		panic(err)
 	}
@@ -136,6 +148,7 @@ func getTwitchChannelEmotes() map[string]int {
 		req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
 		req.Header.Set("Authorization", "Bearer "+Config.OAuth)
 		req.Header.Set("Client-Id", Config.ClientID)
+		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 		if err != nil {
 			log.Printf("\t getTwitchChannelEmotes failed\n")
 			log.Printf("\t For channel %s\n1", user.Name)
@@ -156,7 +169,7 @@ func getTwitchChannelEmotes() map[string]int {
 		var number int
 
 		for _, emote := range emotes.Data {
-			ChannelEmotes = append(ChannelEmotes, emote.Name)
+			tempEmotes = append(tempEmotes, emote.Name)
 			number++
 		}
 
@@ -223,7 +236,7 @@ func get7tvChannelEmotes() map[string]int {
 		var number int
 
 		for _, emote := range emotes {
-			ChannelEmotes = append(ChannelEmotes, emote.Name)
+			tempEmotes = append(tempEmotes, emote.Name)
 			number++
 		}
 
@@ -288,11 +301,11 @@ func getBttvChannelEmotes() map[string]int {
 		var number int
 
 		for _, emote := range emotes.ChannelEmotes {
-			ChannelEmotes = append(ChannelEmotes, emote.Name)
+			tempEmotes = append(tempEmotes, emote.Name)
 			number++
 		}
 		for _, emote := range emotes.SharedEmotes {
-			ChannelEmotes = append(ChannelEmotes, emote.Name)
+			tempEmotes = append(tempEmotes, emote.Name)
 			number++
 		}
 		c[user.Name] = number
@@ -360,7 +373,7 @@ func getFfzChannelEmotes() map[string]int {
 
 		for _, emotes := range set.Sets {
 			for _, emote := range emotes.Emoticons {
-				ChannelEmotes = append(ChannelEmotes, emote.Name)
+				tempEmotes = append(tempEmotes, emote.Name)
 				number++
 			}
 		}
@@ -370,97 +383,42 @@ func getFfzChannelEmotes() map[string]int {
 	return c
 }
 
-// func GetLiveStatuses() {
-// 	for i := 0; i < len(Users); i++ {
-// 		user := &Users[i]
-// 		url := "https://api.twitch.tv/helix/streams?user_login=" + user.Name
-// 		var jsonStr = []byte(`{"":""}`)
-// 		req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
-// 		req.Header.Set("Authorization", "Bearer "+Config.OAuth)
-// 		req.Header.Set("Client-Id", Config.ClientID)
-// 		if err != nil {
-// 			log.Println(err.Error())
-// 		}
-// 		client := &http.Client{}
-// 		resp, err := client.Do(req)
-// 		if err != nil {
-// 			log.Println(err.Error())
-// 			return
-// 		}
-// 		defer resp.Body.Close()
-// 		body, _ := ioutil.ReadAll(resp.Body)
-// 		var stream StreamStatusData
-// 		if err := json.Unmarshal(body, &stream); err != nil {
-// 			log.Println(err.Error())
-// 		}
-// 		if len(stream.Data) == 0 {
-// 			user.IsLive = false
-// 		} else {
-// 			user.IsLive = true
-// 		}
-// 	}
-
-// 	for range time.Tick(1 * time.Minute) {
-// 		for i := 0; i < len(Users); i++ {
-// 			user := &Users[i]
-// 			url := "https://api.twitch.tv/helix/streams?user_login=" + user.Name
-// 			var jsonStr = []byte(`{"":""}`)
-// 			req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
-// 			req.Header.Set("Authorization", "Bearer "+Config.OAuth)
-// 			req.Header.Set("Client-Id", Config.ClientID)
-// 			if err != nil {
-// 				log.Println(err.Error())
-// 			}
-// 			client := &http.Client{}
-// 			resp, err := client.Do(req)
-// 			if err != nil {
-// 				log.Println(err.Error())
-// 				return
-// 			}
-// 			defer resp.Body.Close()
-// 			body, _ := ioutil.ReadAll(resp.Body)
-// 			var stream StreamStatusData
-// 			if err := json.Unmarshal(body, &stream); err != nil {
-// 				log.Println(err.Error())
-// 			}
-// 			if len(stream.Data) == 0 {
-// 				user.IsLive = false
-// 			} else {
-// 				user.IsLive = true
-// 			}
-// 		}
-// 	}
-// }
-
-func GetLiveStatuses() {
+func getLiveStatuses() {
+	getLiveStatus()
 	for range time.Tick(30 * time.Second) {
-		for i := 0; i < len(Users); i++ {
-			user := &Users[i]
-			url := "https://api.twitch.tv/helix/streams?user_login=" + user.Name
-			var jsonStr = []byte(`{"":""}`)
-			req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
-			req.Header.Set("Authorization", "Bearer "+Config.OAuth)
-			req.Header.Set("Client-Id", Config.ClientID)
-			if err != nil {
-				log.Println(err.Error())
-			}
-			client := &http.Client{}
-			resp, err := client.Do(req)
-			if err != nil {
-				log.Println(err.Error())
-				return
-			}
-			defer resp.Body.Close()
-			body, _ := ioutil.ReadAll(resp.Body)
-			var stream StreamStatusData
-			if err := json.Unmarshal(body, &stream); err != nil {
-				log.Println(err.Error())
-			}
-			if len(stream.Data) == 0 {
-				user.IsLive = false
-			} else {
-				user.IsLive = true
-			}
+		getLiveStatus()
+	}
+}
+
+func getLiveStatus() {
+	for i := 0; i < len(Users); i++ {
+		user := &Users[i]
+		url := "https://api.twitch.tv/helix/streams?user_login=" + user.Name
+		var jsonStr = []byte(`{"":""}`)
+		req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
+		req.Header.Set("Authorization", "Bearer "+Config.OAuth)
+		req.Header.Set("Client-Id", Config.ClientID)
+		req.Header.Set("Content-Type", "application/json; charset=utf-8")
+		if err != nil {
+			log.Println(err.Error())
+		}
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		defer resp.Body.Close()
+		body, _ := ioutil.ReadAll(resp.Body)
+		//fmt.Println("LIVE BODY RESPONSE:", string(body))
+		var stream StreamStatusData
+		if err := json.Unmarshal(body, &stream); err != nil {
+			log.Println(err.Error())
+		}
+		if len(stream.Data) == 0 {
+			user.IsLive = false
+		} else {
+			user.IsLive = true
 		}
 	}
 }

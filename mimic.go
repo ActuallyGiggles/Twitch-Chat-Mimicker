@@ -12,31 +12,41 @@ messageRange:
 		u := c.Channel
 		m := c.Message
 
+		//fmt.Println("message recieved")
+
 		if updatingEmotes {
+			//fmt.Println("updating emotes")
 			continue
 		}
 
 		for i := 0; i < len(Users); i++ {
 			user := &Users[i]
 			if user.Name == u {
+				//fmt.Println("found user")
 
 				if user.Busy || !user.IsLive {
+					//fmt.Printf("%s busy: %t, %s live: %t\n", user.Name, user.Busy, user.Name, user.IsLive)
 					continue messageRange
 				}
 
 				e := ParseEmote(m)
 
+				//fmt.Printf("parsed %s into -> \n\t%s\n", m, e)
+
 				exists := false
 				for i := 0; i < len(user.Emotes); i++ {
 					emote := &user.Emotes[i]
 					if e == emote.Name {
+						//fmt.Println("found emote")
 						exists = true
 						emote.Value++
 
 						printDetectedEmotes(user)
+						//fmt.Println("printed detected emotes")
 					}
 
 					if emote.Value >= Config.MessageThreshold {
+						//fmt.Println("responding")
 						go Respond(user, emote.Name)
 						user.Messages = 0
 						user.Emotes = nil
@@ -45,6 +55,7 @@ messageRange:
 				}
 
 				if !exists && e != "" {
+					//fmt.Println("emote doesn't exist, adding")
 					entry := Emote{
 						Name:  e,
 						Value: 1,
@@ -52,11 +63,13 @@ messageRange:
 					user.Emotes = append(user.Emotes, entry)
 
 					printDetectedEmotes(user)
+					//fmt.Println("printed detected emotes")
 				}
 
 				user.Messages++
 
 				if user.Messages > Config.MessageSample {
+					//fmt.Println("starting new sample")
 					user.Messages = 0
 					user.Emotes = nil
 				}
@@ -66,22 +79,23 @@ messageRange:
 }
 
 func printDetectedEmotes(user *User) {
-	fmt.Printf("Emotes detected in %s:\n", user.Name)
+	fmt.Println()
 	for _, emoticon := range user.Emotes {
-		fmt.Printf("\t%s: %d/%d\n", emoticon.Name, emoticon.Value, Config.MessageThreshold)
+		fmt.Printf("\t[%s] %s: %d/%d\n", user.Name, emoticon.Name, emoticon.Value, Config.MessageThreshold)
 	}
 }
 
 func ParseEmote(message string) (eJ string) {
 	s := strings.Split(message, " ")
-
 	var eS []string
+
 loop1:
 	for _, w := range s {
-		for _, emote := range ChannelEmotes {
+		for _, emote := range GlobalEmotes {
 			if w == emote {
 				for _, blacked := range Config.BlacklistEmotes {
 					if strings.ToLower(blacked) == strings.ToLower(emote) {
+						//fmt.Println("emote isn't allowed via globalemotes")
 						return ""
 					}
 				}
@@ -89,10 +103,12 @@ loop1:
 				continue loop1
 			}
 		}
-		for _, emote := range GlobalEmotes {
+
+		for _, emote := range ChannelEmotes {
 			if w == emote {
 				for _, blacked := range Config.BlacklistEmotes {
 					if strings.ToLower(blacked) == strings.ToLower(emote) {
+						//fmt.Println("emote isn't allowed via channelemotes")
 						return ""
 					}
 				}
@@ -119,11 +135,10 @@ func Respond(u *User, message string) {
 	if Config.IntervalMin == Config.IntervalMax {
 		fmt.Println("Waiting", Config.IntervalMin, "minutes to start detecting again...")
 		time.Sleep(time.Duration(Config.IntervalMin) * time.Minute)
-		u.Busy = false
 	} else {
 		r := RandomNumber(Config.IntervalMin, Config.IntervalMax)
 		fmt.Println("Waiting", r, "minutes to start detecting again...")
 		time.Sleep(time.Duration(r) * time.Minute)
-		u.Busy = false
 	}
+	u.Busy = false
 }
