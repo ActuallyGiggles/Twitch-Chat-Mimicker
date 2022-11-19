@@ -16,12 +16,12 @@ type Configuration struct {
 }
 
 type User struct {
-	Name     string
-	ID       string
-	IsLive   bool
-	Busy     bool
-	Messages int
-	Emotes   []Emote
+	Name           string
+	ID             string
+	IsLive         bool
+	Busy           bool
+	Messages       int
+	DetectedEmotes []Emote
 }
 
 type Emote struct {

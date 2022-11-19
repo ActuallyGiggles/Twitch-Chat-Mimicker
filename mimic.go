@@ -34,22 +34,19 @@ messageRange:
 				//fmt.Printf("parsed %s into -> \n\t%s\n", m, e)
 
 				exists := false
-				for i := 0; i < len(user.Emotes); i++ {
-					emote := &user.Emotes[i]
+				for i := 0; i < len(user.DetectedEmotes); i++ {
+					emote := &user.DetectedEmotes[i]
 					if e == emote.Name {
 						//fmt.Println("found emote")
 						exists = true
 						emote.Value++
-
-						printDetectedEmotes(user)
-						//fmt.Println("printed detected emotes")
 					}
 
 					if emote.Value >= Config.MessageThreshold {
 						//fmt.Println("responding")
 						go Respond(user, emote.Name)
 						user.Messages = 0
-						user.Emotes = nil
+						user.DetectedEmotes = nil
 						continue messageRange
 					}
 				}
@@ -60,10 +57,7 @@ messageRange:
 						Name:  e,
 						Value: 1,
 					}
-					user.Emotes = append(user.Emotes, entry)
-
-					printDetectedEmotes(user)
-					//fmt.Println("printed detected emotes")
+					user.DetectedEmotes = append(user.DetectedEmotes, entry)
 				}
 
 				user.Messages++
@@ -71,7 +65,7 @@ messageRange:
 				if user.Messages > Config.MessageSample {
 					//fmt.Println("starting new sample")
 					user.Messages = 0
-					user.Emotes = nil
+					user.DetectedEmotes = nil
 				}
 			}
 		}
@@ -80,7 +74,7 @@ messageRange:
 
 func printDetectedEmotes(user *User) {
 	fmt.Println()
-	for _, emoticon := range user.Emotes {
+	for _, emoticon := range user.DetectedEmotes {
 		fmt.Printf("\t[%s] %s: %d/%d\n", user.Name, emoticon.Name, emoticon.Value, Config.MessageThreshold)
 	}
 }
@@ -125,20 +119,22 @@ loop1:
 
 func Respond(u *User, message string) {
 	u.Busy = true
+
 	rS := RandomNumber(2, 10)
-	fmt.Printf("Saying %s in %s's chat in %d seconds.\n", message, u.Name, rS)
+	//fmt.Printf("Saying %s in %s's chat in %d seconds.\n", message, u.Name, rS)
 	time.Sleep(time.Duration(rS) * time.Second)
 	Say(u.Name, message)
-	clearTerminal()
-	fmt.Printf("Said %s in %s's chat.\n", message, u.Name)
+	//clearTerminal()
+	fmt.Printf("[%s] <- %s ... ", u.Name, message)
 
 	if Config.IntervalMin == Config.IntervalMax {
-		fmt.Println("Waiting", Config.IntervalMin, "minutes to start detecting again...")
+		fmt.Println("waiting", Config.IntervalMin, "minutes")
 		time.Sleep(time.Duration(Config.IntervalMin) * time.Minute)
 	} else {
 		r := RandomNumber(Config.IntervalMin, Config.IntervalMax)
-		fmt.Println("Waiting", r, "minutes to start detecting again...")
+		fmt.Println("waiting", r, "minutes")
 		time.Sleep(time.Duration(r) * time.Minute)
 	}
+
 	u.Busy = false
 }
