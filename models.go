@@ -13,6 +13,8 @@ type Configuration struct {
 
 	Channels        []string
 	BlacklistEmotes []string
+
+	AllowConsecutiveDuplicates bool
 }
 
 type User struct {
@@ -22,6 +24,7 @@ type User struct {
 	Busy           bool
 	Messages       int
 	DetectedEmotes []Emote
+	LastSentEmote  string
 }
 
 type Emote struct {

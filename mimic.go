@@ -30,6 +30,9 @@ messageRange:
 				}
 
 				e := ParseEmote(m)
+				if e == user.LastSentEmote && !Config.AllowConsecutiveDuplicates {
+					continue messageRange
+				}
 
 				//fmt.Printf("parsed %s into -> \n\t%s\n", m, e)
 
@@ -124,6 +127,7 @@ func Respond(u *User, message string) {
 	//fmt.Printf("Saying %s in %s's chat in %d seconds.\n", message, u.Name, rS)
 	time.Sleep(time.Duration(rS) * time.Second)
 	Say(u.Name, message)
+	u.LastSentEmote = message
 	//clearTerminal()
 	fmt.Printf("[%s] <- %s ... ", u.Name, message)
 

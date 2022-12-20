@@ -162,7 +162,7 @@ func configSetup() {
 	clearTerminal()
 
 	// Messaging Interval
-	fmt.Println(`Finally, please specify the range of minutes for the bot to wait in between message sends. (Example: "5 10")`)
+	fmt.Println(`Please specify the range of minutes for the bot to wait in between message sends. (Example: "5 10")`)
 	fmt.Println()
 	fmt.Print("Range: ")
 	scanner = bufio.NewScanner(os.Stdin)
@@ -181,6 +181,20 @@ func configSetup() {
 	}
 	Config.IntervalMin = min
 	Config.IntervalMax = max
+	fmt.Println()
+
+	// Consecutive Duplicates
+	fmt.Println(`Finally, do you want to allow consecutive duplicate emotes to be sent? (Example: sending OMEGALUL two times in a row because the chat won't stop spamming OMEGALUL)`)
+	fmt.Println()
+	fmt.Print("True(t)/False(f): ")
+	scanner = bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	decision, err := strconv.ParseBool(scanner.Text())
+	if err != nil {
+		fmt.Println(`Please answer "t" for true or "f" for false.`)
+		os.Exit(3)
+	}
+	Config.AllowConsecutiveDuplicates = decision
 	fmt.Println()
 
 	writeConfig()
