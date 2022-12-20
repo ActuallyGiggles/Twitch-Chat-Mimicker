@@ -5,7 +5,7 @@ Well, suffer no more. With the highly customizable Twitch Auto Chatter (I like t
 
 
 ### INSTRUCTIONS:
-If you are NOT a developer, or aren't willing to learn Go, simply download the `mimic.exe` file located in releases and run it.
+Simply download the `mimic.exe` file located in releases and run it.
 
 Features:
 1. Help you get your OAuth, Client ID, and Access Token.
