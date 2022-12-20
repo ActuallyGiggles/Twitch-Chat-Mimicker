@@ -7,15 +7,23 @@ Well, suffer no more. With the highly customizable Twitch Auto Chatter (I like t
 ### INSTRUCTIONS:
 If you are NOT a developer, or aren't willing to learn Go, simply download the `mimic.exe` file located in releases and run it.
 
-Things the `mimic.exe` will do:
-1. Help you get your OAuth, Client ID, Access Token.
+Features:
+1. Help you get your OAuth, Client ID, and Access Token.
 2. Let you join your favorite channels.
 3. Allow you to blacklist emotes.
 4. Set the interval range to use between messages.
+5. Set the emote threshold at which to send messages.
+6. Allow you to decide if you want to allow consecutive duplicate emotes to be sent.
 
 - Important note: Responses are randomly delayed between 2-10 seconds of finding an emote to mimic.
 - Important note 2: If you would like to change any of the settings you set after first run, simply open the `config.json` and change them there. :)
 - Important note 3: Is only active when channel is live.
 
-![](https://i.imgur.com/CxjRWOL.png)
-![](https://i.imgur.com/rJ9QxFm.png)
+Emote gathering and channel joining:
+![](https://i.imgur.com/X3v1itY.png)
+
+Emote detecting and sending:
+![](https://i.imgur.com/C1uYCAK.png)
+
+Emotes sent:
+![](https://i.imgur.com/OZx3YPz.png)
