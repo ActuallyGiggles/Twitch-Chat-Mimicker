@@ -88,7 +88,7 @@ func configSetup() {
 	clearTerminal()
 
 	// Client ID
-	fmt.Println("Now let's get your Client ID, it can be found here after registering your application: (https://dev.twitch.tv/console). \n\nSteps:\n1. Give your application a name.\n2. Set the redirect URL to (https://twitchapps.com/tokengen/).\n3. Choose the chatbot category.\n4. Copy and paste the Client ID here.")
+	fmt.Println("Now let's get your Client ID, it can be found here after registering your application: (https://dev.twitch.tv/console). \n\nSteps:\n1. Give your application a name.\n2. Set the redirect URL to (https://twitchapps.com/tokengen/).\n3. Choose the chatbot category.\n4. Copy and paste the Client ID here.\n\nYour Client ID is used to connect to the Twitch API and collect twitch emotes.\nAll information collected stays on your machine and is not visible to anybody except you and Twitch.")
 	fmt.Println()
 	fmt.Print("Client ID: ")
 	scanner = bufio.NewScanner(os.Stdin)
@@ -98,7 +98,7 @@ func configSetup() {
 	clearTerminal()
 
 	// OAuth
-	fmt.Println("Let's generate an OAuth. To do that, go to this website (https://twitchapps.com/tokengen/). \n\nSteps:\n1. Paste in the Client ID\n2. For scopes, type in: 'chat:read chat:edit'.\n3. Click connect and copy and paste the OAuth Token here.")
+	fmt.Println("Let's generate an OAuth. To do that, go to this website (https://twitchapps.com/tokengen/). \n\nSteps:\n1. Paste in the Client ID\n2. For scopes, type in: 'chat:read chat:edit'.\n3. Click connect and copy and paste the OAuth Token here.\n\nYour OAuth is used to connect to the Twitch chatrooms and send messages on your behalf.\nAll information collected stays on your machine and is not visible to anybody except you and Twitch.")
 	fmt.Println()
 	fmt.Print("OAuth: ")
 	scanner = bufio.NewScanner(os.Stdin)
