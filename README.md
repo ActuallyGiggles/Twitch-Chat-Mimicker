@@ -20,10 +20,13 @@ Features:
 - Important note 3: Is only active when channel is live.
 
 Emote gathering and channel joining:
-![](https://i.imgur.com/X3v1itY.png)
+
+![](https://imgur.com/RmypLut.png)
 
 Emote detecting and sending:
-![](https://i.imgur.com/C1uYCAK.png)
+
+![](https://i.imgur.com/bB32anV.png)
 
 Emotes sent:
+
 ![](https://i.imgur.com/OZx3YPz.png)
