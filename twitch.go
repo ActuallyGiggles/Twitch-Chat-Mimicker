@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gempir/go-twitch-irc/v3"
 )
@@ -23,6 +22,7 @@ func Start(in chan Message) {
 		in <- m
 	})
 
+	fmt.Println()
 	for i := 0; i < len(Users); i++ {
 		user := &Users[i]
 		Join(user.Name)
@@ -30,9 +30,7 @@ func Start(in chan Message) {
 		fmt.Println("Joined Room:", user.Name)
 	}
 
-	time.Sleep(5 * time.Second)
-	clearTerminal()
-
+	fmt.Println()
 	fmt.Print("Active.\n\n")
 
 	err := client.Connect()
