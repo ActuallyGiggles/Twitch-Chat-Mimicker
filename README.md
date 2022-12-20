@@ -15,10 +15,6 @@ Features:
 5. Set the emote threshold at which to send messages.
 6. Allow you to decide if you want to allow consecutive duplicate emotes to be sent.
 
-- Important note: Responses are randomly delayed between 2-10 seconds of finding an emote to mimic.
-- Important note 2: If you would like to change any of the settings you set after first run, simply open the `config.json` and change them there. :)
-- Important note 3: Is only active when channel is live.
-
 Emote gathering and channel joining:
 
 ![](https://imgur.com/RmypLut.png)
@@ -30,3 +26,8 @@ Emote detecting and sending:
 Emotes sent:
 
 ![](https://i.imgur.com/OZx3YPz.png)
+
+
+- Important note: Responses are randomly delayed between 2-10 seconds of finding an emote to mimic.
+- Important note 2: If you would like to change any of the settings you set after first run, simply open the `config.json` and change them there. :)
+- Important note 3: Is only active when channel is live.
