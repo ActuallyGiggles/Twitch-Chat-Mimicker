@@ -9,6 +9,7 @@ import (
 func Print(p Instructions) {
 	pterm.Success.Printf("%-20s     %s\n%s", strings.ToUpper(p.Channel), p.Emote, pterm.Gray("Note: "+p.Note))
 	pterm.Println()
+	pterm.Println()
 }
 
 func Page(title string, content func()) {
@@ -23,6 +24,7 @@ func Page(title string, content func()) {
 		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgLightBlue)).WithFullWidth().Println("Twitch Chat Mimicker by ActuallyGiggles")
 		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgLightBlue)).WithFullWidth().Println(title)
 	}
+	pterm.Println()
 	pterm.Println()
 	content()
 }
