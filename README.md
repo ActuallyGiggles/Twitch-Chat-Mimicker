@@ -1,33 +1,21 @@
-# TwitchAutoChatter
-Do you like to game/code/do other dubious deeds while watching a Twitch stream? Do you want to type in the chat, but you're just too busy with your hands?
-
-Well, suffer no more. With the highly customizable Twitch Auto Chatter (I like to call it a Mimic), you can participate with chat in telling the streamer just how bad they are at the game while you occupy your hands with... more pleasant things.
+# Twitch Chat Mimicker
+Twitch Chat Mimicker will automatically send emotes in your stead if a Twitch chatroom send a certain emote multiple times.
 
 
-### INSTRUCTIONS:
-Simply download the `mimic.exe` file located in releases and run it.
+## Instructions
 
-Features:
-1. Help you get your OAuth, Client ID, and Access Token.
-2. Let you join your favorite channels.
-3. Allow you to blacklist emotes.
-4. Set the interval range to use between messages.
-5. Set the emote threshold at which to send messages.
-6. Allow you to decide if you want to allow consecutive duplicate emotes to be sent.
+Download [`twitch-chat-mimicker.exe`](https://github.com/ActuallyGiggles/Twitch-Chat-Mimicker/releases/tag/1.0.0) and simply run it. The program will guide you with initial set up.
 
-Emote gathering and channel joining:
+## Additional Information
 
-![](https://imgur.com/RmypLut.png)
+1. You can specify which channels to answer in.
+2. You can specify which emotes should be blacklisted.
+3. You can specify how much of a sample size to use and how much of that sample size should contain the same emote to trigger sending.
+4. You can specify how long to wait before detecting emotes again (to seem more human).
+5. You can specify if the same emote is allowed to be sent multiple times in a row.
 
-Emote detecting and sending:
+Responses are randomly delayed between 2-10 seconds of finding an emote to mimic.
 
-![](https://i.imgur.com/bB32anV.png)
+If you would like to add channels to monitor, edit the config JSON file.
 
-Emotes sent:
-
-![](https://i.imgur.com/OZx3YPz.png)
-
-
-- Important note: Responses are randomly delayed between 2-10 seconds of finding an emote to mimic.
-- Important note 2: If you would like to change any of the settings you set after first run, simply open the `config.json` and change them there. :)
-- Important note 3: Is only active when channel is live.
+Emotes will only be sent if the channel is live.
