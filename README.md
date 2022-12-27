@@ -15,7 +15,5 @@ Download [`twitch-chat-mimicker.exe`](https://github.com/ActuallyGiggles/Twitch-
 5. You can specify if the same emote is allowed to be sent multiple times in a row.
 
 Responses are randomly delayed between 2-10 seconds of finding an emote to mimic.
-
 If you would like to add channels to monitor, edit the config JSON file.
-
 Emotes will only be sent if the channel is live.
