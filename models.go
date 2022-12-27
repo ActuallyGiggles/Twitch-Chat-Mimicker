@@ -112,3 +112,9 @@ type StreamStatusActual struct {
 	Name string `json:"user_login"`
 	Type string `json:"type"`
 }
+
+// Twitch message struct
+type Message struct {
+	Channel string
+	Message string
+}

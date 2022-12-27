@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,15 +19,19 @@ func main() {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGHUP)
 
+	Page("Set Up", func() {})
+
 	readConfig()
 
-	getEmotes()
+	getEmotes(true)
 	go getLiveStatuses()
 
 	C := make(chan Message)
 	go Start(C)
 	go Mimic(C)
 
+	Page("Started", func() {})
+
 	<-sc
-	fmt.Println("Stopping...")
+	Page("Exited", func() {})
 }

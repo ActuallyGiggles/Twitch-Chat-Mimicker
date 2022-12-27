@@ -76,7 +76,6 @@ messageRange:
 }
 
 func printDetectedEmotes(user *User) {
-	fmt.Println()
 	for _, emoticon := range user.DetectedEmotes {
 		fmt.Printf("\t[%s] %s: %d/%d\n", user.Name, emoticon.Name, emoticon.Value, Config.MessageThreshold)
 	}
@@ -124,21 +123,25 @@ func Respond(u *User, message string) {
 	u.Busy = true
 
 	rS := RandomNumber(2, 10)
-	//fmt.Printf("Saying %s in %s's chat in %d seconds.\n", message, u.Name, rS)
 	time.Sleep(time.Duration(rS) * time.Second)
 	Say(u.Name, message)
 	u.LastSentEmote = message
-	//clearTerminal()
-	fmt.Printf("[%s] <- %s ... ", u.Name, message)
+
+	var waitTime int
 
 	if Config.IntervalMin == Config.IntervalMax {
-		fmt.Println("waiting", Config.IntervalMin, "minutes")
-		time.Sleep(time.Duration(Config.IntervalMin) * time.Minute)
+		waitTime = Config.IntervalMin
 	} else {
-		r := RandomNumber(Config.IntervalMin, Config.IntervalMax)
-		fmt.Println("waiting", r, "minutes")
-		time.Sleep(time.Duration(r) * time.Minute)
+		waitTime = RandomNumber(Config.IntervalMin, Config.IntervalMax)
 	}
+
+	Print(Instructions{
+		Channel: u.Name,
+		Emote:   message,
+		Note:    fmt.Sprintf("waiting %d minutes...", waitTime),
+	})
+
+	time.Sleep(time.Duration(waitTime) * time.Minute)
 
 	u.Busy = false
 }
