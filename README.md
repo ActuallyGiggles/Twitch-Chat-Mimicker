@@ -4,7 +4,7 @@ Twitch Chat Mimicker will automatically send emotes in your stead if a Twitch ch
 
 ## Instructions
 
-Download [`twitch-chat-mimicker.exe`](https://github.com/ActuallyGiggles/Twitch-Chat-Mimicker/releases/tag/1.0.0) and simply run it. The program will guide you with initial set up.
+Download [`twitch-chat-mimicker.zip`](https://github.com/ActuallyGiggles/Twitch-Chat-Mimicker/releases/tag/1.0.0) and unzip it. Now you can launch `twitch-chat-mimicker.exe` inside of that folder and the program will run you through the first time setup.
 
 ## Additional Information
 
