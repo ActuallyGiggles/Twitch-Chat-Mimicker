@@ -63,7 +63,7 @@ func configSetup() {
 
 	// Client ID
 	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Obtaining your ClientID is necessary to gather Twitch emotes.\nHere is a link to get it: ", pterm.Underscore.Sprintf("https://dev.twitch.tv/console\n"), "Steps:\n1. Give your application a name.\n2. Set the redirect URL to (https://twitchapps.com/tokengen/).\n3. Choose the chatbot category.\n4. Copy and paste the Client ID here.\n"))
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Obtaining your ClientID is necessary to gather Twitch emotes.\nHere is a link to get it: ", pterm.Underscore.Sprintf("https://dev.twitch.tv/console\n"), "\n\nSteps:\n1. Give your application a name.\n2. Set the redirect URL to (https://twitchapps.com/tokengen/).\n3. Choose the chatbot category.\n4. Copy and paste the Client ID here.\n"))
 		pterm.Println()
 		pterm.Print(pterm.LightBlue("	--Account Client ID: "))
 		scanner := bufio.NewScanner(os.Stdin)
@@ -161,7 +161,7 @@ func configSetup() {
 
 	// Messaging Interval
 	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the range of minutes for the bot to wait in between message sends.\nRecommended: '1 5'\n"))
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the range of minutes for the bot to wait in between message sends.\n\nSeparate the minimum and maximum with spaces.\nRecommended: '1 5'\n"))
 		pterm.Println()
 		pterm.Print(pterm.LightBlue("	--Range: "))
 		scanner := bufio.NewScanner(os.Stdin)
