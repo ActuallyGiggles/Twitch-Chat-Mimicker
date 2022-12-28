@@ -19,7 +19,9 @@ func main() {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGHUP)
 
-	Page("Set Up", func() {})
+	Page("Set Up", func() bool {
+		return true
+	})
 
 	readConfig()
 
@@ -31,8 +33,12 @@ func main() {
 	go Start(C)
 	go Mimic(C)
 
-	Page("Started", func() {})
+	Page("Started", func() bool {
+		return true
+	})
 
 	<-sc
-	Page("Exited", func() {})
+	Page("Exited", func() bool {
+		return true
+	})
 }

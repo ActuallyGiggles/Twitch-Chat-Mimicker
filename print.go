@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"os"
 	"strings"
 
 	"github.com/pterm/pterm"
@@ -12,7 +14,8 @@ func Print(p Instructions) {
 	pterm.Println()
 }
 
-func Page(title string, content func()) {
+func Page(title string, content func() bool) {
+doAgain:
 	print("\033[H\033[2J")
 	if title == "Exited" {
 		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgLightRed)).WithFullWidth().Println("Twitch Chat Mimicker by ActuallyGiggles")
@@ -26,7 +29,12 @@ func Page(title string, content func()) {
 	}
 	pterm.Println()
 	pterm.Println()
-	content()
+	if !content() {
+		pterm.Error.Println("Press Enter to try again.")
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		goto doAgain
+	}
 }
 
 func Clear() {
