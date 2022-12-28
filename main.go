@@ -24,6 +24,7 @@ func main() {
 	readConfig()
 
 	getEmotes(true)
+	go updateEmotes()
 	go getLiveStatuses()
 
 	C := make(chan Message)

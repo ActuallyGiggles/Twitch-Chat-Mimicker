@@ -46,6 +46,9 @@ func getEmotes(isInit bool) {
 	if isInit {
 		pb.UpdateTitle("Gathering channel emotes...")
 	}
+
+	ChannelEmotes = nil
+
 	for i := 0; i < len(Users); i++ {
 		user := &Users[i]
 		TChannel := getTwitchChannelEmotes(user)
@@ -71,18 +74,11 @@ func getEmotes(isInit bool) {
 	}
 
 	updatingEmotes = false
-
-	go updateEmotes()
 }
 
 func updateEmotes() {
 	for range time.Tick(1 * time.Hour) {
-		updatingEmotes = true
-		ChannelEmotes = nil
-
 		getEmotes(false)
-
-		updatingEmotes = false
 	}
 }
 
