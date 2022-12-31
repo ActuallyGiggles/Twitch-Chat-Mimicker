@@ -1,5 +1,5 @@
 # Twitch Chat Mimicker
-Twitch Chat Mimicker will automatically send emotes in your stead if a Twitch chatroom send a certain emote multiple times.
+Twitch Chat Mimicker will automatically send emotes in your stead if it detects that a Twitch chatroom sends a certain emote multiple times.
 
 
 ## Instructions
