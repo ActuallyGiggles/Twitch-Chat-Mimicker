@@ -76,9 +76,20 @@ type TwitchChannelEmote struct {
 	ThemeMode  []string          `json:"theme_mode"`
 }
 
+type SevenTVGlobalEmoteSet struct {
+	Emotes []SevenTVEmote `json:"emotes"`
+}
+
+type SevenTVChannel struct {
+	EmoteSet SevenTVChannelEmoteSet `json:"emote_set"`
+}
+
+type SevenTVChannelEmoteSet struct {
+	Emotes []SevenTVEmote `json:"emotes"`
+}
+
 type SevenTVEmote struct {
-	Name string     `json:"name"`
-	Urls [][]string `json:"urls"`
+	Name string `json:"name"`
 }
 
 type BttvChannelEmotes[T any] struct {
