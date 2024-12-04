@@ -12,11 +12,12 @@ import (
 
 func readConfig() {
 	f, err := os.Open("./config.json")
-	defer f.Close()
 	if err != nil {
 		configSetup()
+		f.Close()
 		return
 	}
+	defer f.Close()
 
 	err = json.NewDecoder(f).Decode(&Config)
 	if err != nil {
@@ -99,9 +100,7 @@ func configSetup() {
 			pterm.Error.Println("No channels entered!")
 			return false
 		}
-		for _, channel := range channels {
-			Config.Channels = append(Config.Channels, channel)
-		}
+		Config.Channels = append(Config.Channels, channels...)
 		return true
 	})
 
@@ -119,15 +118,13 @@ func configSetup() {
 			pterm.Error.Println("No channels entered!")
 			return false
 		}
-		for _, blacked := range blacklist {
-			Config.BlacklistEmotes = append(Config.BlacklistEmotes, blacked)
-		}
+		Config.BlacklistEmotes = append(Config.BlacklistEmotes, blacklist...)
 		return true
 	})
 
 	// Message Sample
 	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the amount of messages to sample?\nRecommended: 10\n"))
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the amount of messages to sample?\nRecommended: 20\n"))
 		pterm.Println()
 		pterm.Print(pterm.LightBlue("	--Sample: "))
 		scanner := bufio.NewScanner(os.Stdin)
@@ -144,7 +141,7 @@ func configSetup() {
 
 	// Message Threshold
 	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Out of that sample size, specify the amount of times that an emote has to repeat itself to send it?\nRecommended: 3\n"))
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Out of that sample size, specify the amount of times that an emote has to repeat itself to send it?\nRecommended: 5\n"))
 		pterm.Println()
 		pterm.Print(pterm.LightBlue("	--Threshold: "))
 		scanner := bufio.NewScanner(os.Stdin)

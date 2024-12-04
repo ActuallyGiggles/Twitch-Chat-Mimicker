@@ -38,7 +38,7 @@ func main() {
 	})
 
 	<-sc
-	Page("Exited", func() bool {
+	Page("Aborted", func() bool {
 		return true
 	})
 }
