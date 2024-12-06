@@ -50,23 +50,23 @@ func getEmotes(isInit bool) {
 
 	for i := 0; i < len(Users); i++ {
 		user := &Users[i]
-		TChannel := getTwitchChannelEmotes(user)
-		ChannelEmotes = append(ChannelEmotes, TChannel...)
+		TwitchChannelEmotes := getTwitchChannelEmotes(user)
+		ChannelEmotes = append(ChannelEmotes, TwitchChannelEmotes...)
 		if isInit {
 			pb.Increment()
 		}
-		SChannel := get7tvChannelEmotes(user)
-		ChannelEmotes = append(ChannelEmotes, SChannel...)
+		SevenTVChannelEmotes := get7tvChannelEmotes(user)
+		ChannelEmotes = append(ChannelEmotes, SevenTVChannelEmotes...)
 		if isInit {
 			pb.Increment()
 		}
-		BChannel := getBttvChannelEmotes(user)
-		ChannelEmotes = append(ChannelEmotes, BChannel...)
+		BetterTTVChannelEmotes := getBttvChannelEmotes(user)
+		ChannelEmotes = append(ChannelEmotes, BetterTTVChannelEmotes...)
 		if isInit {
 			pb.Increment()
 		}
-		FChannel := getFfzChannelEmotes(user)
-		ChannelEmotes = append(ChannelEmotes, FChannel...)
+		FFZChannelEmotes := getFfzChannelEmotes(user)
+		ChannelEmotes = append(ChannelEmotes, FFZChannelEmotes...)
 		if isInit {
 			pb.Increment()
 		}

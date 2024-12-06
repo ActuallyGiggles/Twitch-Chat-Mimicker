@@ -103,13 +103,13 @@ messageRange:
 // }
 
 func ParseEmote(message string) (eJ string) {
-	s := strings.Split(message, " ")
+	sentenceSliced := strings.Split(message, " ")
 	var eS []string
 
 loop1:
-	for _, w := range s {
+	for _, word := range sentenceSliced {
 		for _, emote := range GlobalEmotes {
-			if w == emote {
+			if word == emote {
 				for _, blacked := range Config.BlacklistEmotes {
 					if strings.EqualFold(blacked, emote) {
 						//fmt.Println("emote isn't allowed via globalemotes")
@@ -122,7 +122,7 @@ loop1:
 		}
 
 		for _, emote := range ChannelEmotes {
-			if w == emote {
+			if word == emote {
 				for _, blacked := range Config.BlacklistEmotes {
 					if strings.EqualFold(blacked, emote) {
 						//fmt.Println("emote isn't allowed via channelemotes")
