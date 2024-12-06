@@ -11,8 +11,9 @@ type Configuration struct {
 	MessageThreshold int
 	MessageSample    int
 
-	Channels        []string
-	BlacklistEmotes []string
+	Channels         []string
+	BlacklistEmotes  []string
+	WordLetterCombos []string
 
 	AllowConsecutiveDuplicates bool
 }
@@ -53,6 +54,22 @@ type Data struct {
 type TwitchEmoteAPIResponse[T any] struct {
 	Data     []T    `json:"data"`
 	Template string `json:"template"`
+}
+
+type EmoteAmountsStruct struct {
+	TwitchGlobal  int
+	TwitchChannel int
+
+	SevenTVGlobal  int
+	SevenTVChannel int
+
+	BetterTTVGlobal  int
+	BetterTTVChannel int
+
+	FFZGlobal  int
+	FFZChannel int
+
+	Emojis int
 }
 
 type TwitchGlobalEmote struct {
@@ -113,6 +130,14 @@ type FfzSet struct {
 type FfzEmotes struct {
 	Name string            `json:"name"`
 	Urls map[string]string `json:"urls"`
+}
+
+type EmojisStruct struct {
+	Emojis []Emoji `json:"emojis"`
+}
+
+type Emoji struct {
+	Name string `json:"emoji"`
 }
 
 type StreamStatusData struct {

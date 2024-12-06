@@ -30,14 +30,16 @@ func getEmotes(isInit bool) {
 			pb.Increment()
 		}
 
+		EmoteAmounts.Emojis = getEmojis()
+
 		// Get global emotes
-		getTwitchGlobalEmotes()
+		EmoteAmounts.TwitchGlobal = getTwitchGlobalEmotes()
 		pb.Increment()
-		get7tvGlobalEmotes()
+		EmoteAmounts.SevenTVGlobal = get7tvGlobalEmotes()
 		pb.Increment()
-		getBttvGlobalEmotes()
+		EmoteAmounts.BetterTTVGlobal = getBttvGlobalEmotes()
 		pb.Increment()
-		getFfzGlobalEmotes()
+		EmoteAmounts.FFZGlobal = getFfzGlobalEmotes()
 		pb.Increment()
 	}
 
@@ -46,31 +48,29 @@ func getEmotes(isInit bool) {
 		pb.UpdateTitle("Gathering channel emotes...")
 	}
 
-	ChannelEmotes = nil
-
 	for i := 0; i < len(Users); i++ {
 		user := &Users[i]
-		TwitchChannelEmotes := getTwitchChannelEmotes(user)
-		ChannelEmotes = append(ChannelEmotes, TwitchChannelEmotes...)
+		EmoteAmounts.TwitchChannel = getTwitchChannelEmotes(user)
 		if isInit {
 			pb.Increment()
 		}
-		SevenTVChannelEmotes := get7tvChannelEmotes(user)
-		ChannelEmotes = append(ChannelEmotes, SevenTVChannelEmotes...)
+
+		EmoteAmounts.SevenTVChannel = get7tvChannelEmotes(user)
 		if isInit {
 			pb.Increment()
 		}
-		BetterTTVChannelEmotes := getBttvChannelEmotes(user)
-		ChannelEmotes = append(ChannelEmotes, BetterTTVChannelEmotes...)
+		EmoteAmounts.BetterTTVChannel = getBttvChannelEmotes(user)
 		if isInit {
 			pb.Increment()
 		}
-		FFZChannelEmotes := getFfzChannelEmotes(user)
-		ChannelEmotes = append(ChannelEmotes, FFZChannelEmotes...)
+
+		EmoteAmounts.FFZChannel = getFfzChannelEmotes(user)
 		if isInit {
 			pb.Increment()
 		}
 	}
+
+	//TODO: EMOJIS https://raw.githubusercontent.com/chalda-pnuzig/emojis.json/refs/heads/master/src/list.json
 
 	updatingEmotes = false
 }
@@ -136,14 +136,14 @@ func getTwitchGlobalEmotes() (number int) {
 	}
 
 	for _, emote := range emotes.Data {
-		GlobalEmotes = append(GlobalEmotes, emote.Name)
+		Emotes = append(Emotes, emote.Name)
 		number++
 	}
 
 	return number
 }
 
-func getTwitchChannelEmotes(user *User) (c []string) {
+func getTwitchChannelEmotes(user *User) (number int) {
 	url := "https://api.twitch.tv/helix/chat/emotes?broadcaster_id=" + user.ID
 
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte(``)))
@@ -168,10 +168,11 @@ func getTwitchChannelEmotes(user *User) (c []string) {
 	}
 
 	for _, emote := range emotes.Data {
-		c = append(c, emote.Name)
+		Emotes = append(Emotes, emote.Name)
+		number++
 	}
 
-	return c
+	return number
 }
 
 func get7tvGlobalEmotes() (number int) {
@@ -194,14 +195,14 @@ func get7tvGlobalEmotes() (number int) {
 	}
 
 	for _, emote := range emoteSet.Emotes {
-		GlobalEmotes = append(GlobalEmotes, emote.Name)
+		Emotes = append(Emotes, emote.Name)
 		number++
 	}
 
 	return number
 }
 
-func get7tvChannelEmotes(user *User) (c []string) {
+func get7tvChannelEmotes(user *User) (number int) {
 	url := "https://7tv.io/v3/users/twitch/" + user.ID
 
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte(``)))
@@ -214,7 +215,7 @@ func get7tvChannelEmotes(user *User) (c []string) {
 		panic(err)
 	}
 	if resp.StatusCode >= http.StatusBadRequest {
-		return c
+		return
 	}
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
@@ -224,10 +225,11 @@ func get7tvChannelEmotes(user *User) (c []string) {
 	}
 
 	for _, emote := range channel.EmoteSet.Emotes {
-		c = append(c, emote.Name)
+		Emotes = append(Emotes, emote.Name)
+		number++
 	}
 
-	return c
+	return number
 }
 
 func getBttvGlobalEmotes() (number int) {
@@ -250,13 +252,13 @@ func getBttvGlobalEmotes() (number int) {
 	}
 
 	for _, emote := range emotes {
-		GlobalEmotes = append(GlobalEmotes, emote.Name)
+		Emotes = append(Emotes, emote.Name)
 		number++
 	}
 	return number
 }
 
-func getBttvChannelEmotes(user *User) (c []string) {
+func getBttvChannelEmotes(user *User) (number int) {
 	url := "https://api.betterttv.net/3/cached/users/twitch/" + user.ID
 
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte(``)))
@@ -269,7 +271,7 @@ func getBttvChannelEmotes(user *User) (c []string) {
 		panic(err)
 	}
 	if resp.StatusCode >= http.StatusBadRequest {
-		return c
+		return
 	}
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
@@ -279,13 +281,15 @@ func getBttvChannelEmotes(user *User) (c []string) {
 	}
 
 	for _, emote := range emotes.ChannelEmotes {
-		c = append(c, emote.Name)
+		Emotes = append(Emotes, emote.Name)
+		number++
 	}
 	for _, emote := range emotes.SharedEmotes {
-		c = append(c, emote.Name)
+		Emotes = append(Emotes, emote.Name)
+		number++
 	}
 
-	return c
+	return number
 }
 
 func getFfzGlobalEmotes() (number int) {
@@ -309,7 +313,7 @@ func getFfzGlobalEmotes() (number int) {
 
 	for _, emotes := range set.Sets {
 		for _, emote := range emotes.Emoticons {
-			GlobalEmotes = append(GlobalEmotes, emote.Name)
+			Emotes = append(Emotes, emote.Name)
 			number++
 		}
 	}
@@ -317,7 +321,7 @@ func getFfzGlobalEmotes() (number int) {
 	return number
 }
 
-func getFfzChannelEmotes(user *User) (c []string) {
+func getFfzChannelEmotes(user *User) (number int) {
 	url := "https://api.frankerfacez.com/v1/room/id/" + user.ID
 
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte(``)))
@@ -330,7 +334,7 @@ func getFfzChannelEmotes(user *User) (c []string) {
 		panic(err)
 	}
 	if resp.StatusCode >= http.StatusBadRequest {
-		return c
+		return
 	}
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
@@ -341,11 +345,12 @@ func getFfzChannelEmotes(user *User) (c []string) {
 
 	for _, emotes := range set.Sets {
 		for _, emote := range emotes.Emoticons {
-			c = append(c, emote.Name)
+			Emotes = append(Emotes, emote.Name)
+			number++
 		}
 	}
 
-	return c
+	return number
 }
 
 func getLiveStatuses() {
@@ -386,4 +391,31 @@ func getLiveStatus() {
 			user.IsLive = true
 		}
 	}
+}
+
+func getEmojis() (number int) {
+	url := "https://raw.githubusercontent.com/chalda-pnuzig/emojis.json/refs/heads/master/src/list.json"
+
+	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte(``)))
+	if err != nil {
+		panic(err)
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	allEmojis := EmojisStruct{}
+	if err := json.Unmarshal(body, &allEmojis); err != nil {
+		panic(err)
+	}
+
+	for _, emoji := range allEmojis.Emojis {
+		Emotes = append(Emotes, emoji.Name)
+		number++
+	}
+
+	return number
 }

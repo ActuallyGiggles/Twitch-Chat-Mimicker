@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/pterm/pterm"
@@ -14,11 +16,17 @@ func PrintSuccess(p Instructions) {
 	pterm.Println()
 }
 
-func PrintFail(p Instructions) {
-	pterm.Info.Printf("%-20s     %s\n%s", strings.ToUpper(p.Channel), p.Emote, pterm.Gray(p.Note))
+func PrintWarning(p Instructions) {
+	pterm.Warning.Printf("%-20s     %s\n%s", strings.ToUpper(p.Channel), p.Emote, pterm.Gray(p.Note))
 	pterm.Println()
 	pterm.Println()
 }
+
+// func PrintInfo(p Instructions) {
+// 	pterm.Warning.Printf("%-20s     %s\n%s", strings.ToUpper(p.Channel), p.Emote, pterm.Gray(p.Note))
+// 	pterm.Println()
+// 	pterm.Println()
+// }
 
 func Page(title string, content func() bool) {
 doAgain:
@@ -27,6 +35,28 @@ doAgain:
 		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgLightRed)).WithFullWidth().Println("Twitch Chat Mimicker " + title)
 	} else if title == "Started" {
 		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgGreen)).WithFullWidth().Println("Twitch Chat Mimicker " + title)
+
+		pterm.Println()
+		pterm.Info.Printf("%-20s     %s\n%s\n\n%s", "TotalEmotes:",
+			strconv.Itoa(EmoteAmounts.TwitchGlobal+
+				EmoteAmounts.TwitchChannel+
+				EmoteAmounts.SevenTVGlobal+
+				EmoteAmounts.SevenTVChannel+
+				EmoteAmounts.BetterTTVGlobal+
+				EmoteAmounts.BetterTTVChannel+
+				EmoteAmounts.FFZGlobal+
+				EmoteAmounts.FFZChannel),
+			pterm.Gray(fmt.Sprintf("Twitch Global: %d\nTwitch Channel: %d\nSevenTV Global: %d\nSevenTV Channel: %d\nBetterTTV Global: %d\nBetterTTV Channel: %d\nFFZ Global: %d\nFFZ Channel: %d",
+				EmoteAmounts.TwitchGlobal,
+				EmoteAmounts.TwitchChannel,
+				EmoteAmounts.SevenTVGlobal,
+				EmoteAmounts.SevenTVChannel,
+				EmoteAmounts.BetterTTVGlobal,
+				EmoteAmounts.BetterTTVChannel,
+				EmoteAmounts.FFZGlobal,
+				EmoteAmounts.FFZChannel)),
+			pterm.Gray(fmt.Sprintf("Emojis: %d", EmoteAmounts.Emojis)))
+
 	} else if title == "Set Up" {
 		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgLightBlue)).WithFullWidth().Println("Twitch Chat Mimicker " + title)
 	}

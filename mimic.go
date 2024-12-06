@@ -79,11 +79,13 @@ messageRange:
 						}
 					}
 
+					t := time.Now()
+
 					if maxValue > 1 {
-						PrintFail(Instructions{
+						PrintWarning(Instructions{
 							Channel: user.Name,
 							Emote:   maxName,
-							Note:    fmt.Sprintf("Times Used: %d/%d | Sample Size: %d", maxValue, Config.MessageThreshold, Config.MessageSample),
+							Note:    fmt.Sprintf("Times Used: %d/%d | Sample Size: %d\n%d:%0d", maxValue, Config.MessageThreshold, Config.MessageSample, t.Hour(), t.Minute()),
 						})
 					}
 
@@ -102,42 +104,35 @@ messageRange:
 // 	}
 // }
 
-func ParseEmote(message string) (eJ string) {
-	sentenceSliced := strings.Split(message, " ")
-	var eS []string
+func ParseEmote(message string) string {
+	// Parse for word letter combo
+	for _, combo := range Config.WordLetterCombos {
+		if strings.Contains(strings.ToLower(message), combo) {
+			return combo
+		}
+	}
 
+	sentenceSliced := strings.Split(message, " ")
+	var emotesSliced []string
+
+	// Parse for emote or emoji
 loop1:
 	for _, word := range sentenceSliced {
-		for _, emote := range GlobalEmotes {
+		for _, emote := range Emotes {
 			if word == emote {
 				for _, blacked := range Config.BlacklistEmotes {
+					// Ignore messages with blacklisted emotes
 					if strings.EqualFold(blacked, emote) {
-						//fmt.Println("emote isn't allowed via globalemotes")
 						return ""
 					}
 				}
-				eS = append(eS, emote)
-				continue loop1
-			}
-		}
-
-		for _, emote := range ChannelEmotes {
-			if word == emote {
-				for _, blacked := range Config.BlacklistEmotes {
-					if strings.EqualFold(blacked, emote) {
-						//fmt.Println("emote isn't allowed via channelemotes")
-						return ""
-					}
-				}
-				eS = append(eS, emote)
+				emotesSliced = append(emotesSliced, emote)
 				continue loop1
 			}
 		}
 	}
 
-	eJ = strings.Join(eS, " ")
-
-	return eJ
+	return strings.Join(emotesSliced, " ")
 }
 
 func Respond(u *User, message string) {
@@ -156,10 +151,12 @@ func Respond(u *User, message string) {
 		waitTime = RandomNumber(Config.IntervalMin, Config.IntervalMax)
 	}
 
+	t := time.Now()
+
 	PrintSuccess(Instructions{
 		Channel: u.Name,
 		Emote:   message,
-		Note:    fmt.Sprintf("Delay: %ds | Cooldown: %dm", rS, waitTime),
+		Note:    fmt.Sprintf("Delay: %ds | Cooldown: %dm\n%d:%0d", rS, waitTime, t.Hour(), t.Minute()),
 	})
 
 	time.Sleep(time.Duration(waitTime) * time.Minute)
