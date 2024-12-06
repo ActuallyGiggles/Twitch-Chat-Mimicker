@@ -88,12 +88,12 @@ func configSetup() {
 
 	// Channels
 	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the channels in which the program should act in.\nSeparate channel names with spaces.\n"))
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the channels in which the program should act in.\nExample: 'nmplol, xcq, sodapoppin'\n"))
 		pterm.Println()
 		pterm.Print(pterm.LightBlue("	--Channels To Join: "))
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
-		channels := strings.Split(strings.ToLower(scanner.Text()), " ")
+		channels := strings.Split(strings.ToLower(scanner.Text()), ", ")
 		if strings.Trim(channels[0], " ") == "" {
 			pterm.Println()
 			pterm.Println()
@@ -106,19 +106,31 @@ func configSetup() {
 
 	// Blacklisted Emotes
 	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the emotes that you want blacklisted.\nSeparate them with spaces.\nExample: 'TriHard KEKW ResidentSleeper'"))
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the emotes that you want blacklisted.\n\nExample: 'TriHard, KEKW, ResidentSleeper'"))
 		pterm.Println()
 		pterm.Print(pterm.LightBlue("	--Blacklisted Emotes: "))
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
-		blacklist := strings.Split(strings.ToLower(scanner.Text()), " ")
+		blacklist := strings.Split(strings.ToLower(scanner.Text()), ", ")
 		if strings.Trim(blacklist[0], " ") == "" {
 			pterm.Println()
 			pterm.Println()
-			pterm.Error.Println("No channels entered!")
+			pterm.Error.Println("No emotes entered!")
 			return false
 		}
 		Config.BlacklistEmotes = append(Config.BlacklistEmotes, blacklist...)
+		return true
+	})
+
+	// Custom Words/Letters
+	Page("Set Up", func() bool {
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Are there any words or letters that pair with emotes? Separate them with commas.\nExample: 'L OMEGALUL L, W H OMEGALUL'"))
+		pterm.Println()
+		pterm.Print(pterm.LightBlue("	--Word/Letter combos: "))
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		WordLetterCombos := strings.Split(strings.ToLower(scanner.Text()), ", ")
+		Config.WordLetterCombos = append(Config.WordLetterCombos, WordLetterCombos...)
 		return true
 	})
 
@@ -158,13 +170,13 @@ func configSetup() {
 
 	// Messaging Interval
 	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the range of minutes for the bot to wait in between message sends.\n\nSeparate the minimum and maximum with spaces.\nRecommended: '1 5'\n"))
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the range of minutes for the bot to wait in between message sends.\n\nSeparate the minimum and maximum with spaces.\nRecommended: '1, 5'\n"))
 		pterm.Println()
 		pterm.Print(pterm.LightBlue("	--Range: "))
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
 		interval := scanner.Text()
-		tS := strings.Split(interval, " ")
+		tS := strings.Split(interval, ", ")
 		min, err := strconv.Atoi(tS[0])
 		if err != nil {
 			pterm.Error.Println(tS[0], "is not a number!")
