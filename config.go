@@ -124,12 +124,12 @@ func configSetup() {
 
 	// Custom Words/Letters
 	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Are there any words or letters that pair with emotes? Separate them with commas.\nExample: 'L OMEGALUL L, W H OMEGALUL'"))
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Are there any words or letters that pair with emotes? Separate them with commas.\nExample: 'L OMEGALUL L, W H OMEGALUL, F'"))
 		pterm.Println()
 		pterm.Print(pterm.LightBlue("	--Word/Letter combos: "))
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
-		WordLetterCombos := strings.Split(strings.ToLower(scanner.Text()), ", ")
+		WordLetterCombos := strings.Split(scanner.Text(), ", ")
 		Config.WordLetterCombos = append(Config.WordLetterCombos, WordLetterCombos...)
 		return true
 	})
@@ -170,7 +170,7 @@ func configSetup() {
 
 	// Messaging Interval
 	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the range of minutes for the bot to wait in between message sends.\n\nSeparate the minimum and maximum with spaces.\nRecommended: '1, 5'\n"))
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the range of seconds for the bot to wait in between message sends.\n\nSeparate the minimum and maximum with spaces.\nRecommended: '60, 300'\n"))
 		pterm.Println()
 		pterm.Print(pterm.LightBlue("	--Range: "))
 		scanner := bufio.NewScanner(os.Stdin)

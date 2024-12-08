@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -107,7 +108,12 @@ messageRange:
 func ParseEmote(message string) string {
 	// Parse for word letter combo
 	for _, combo := range Config.WordLetterCombos {
-		if strings.Contains(strings.ToLower(message), combo) {
+		match, err := regexp.MatchString(`/^`+combo+`$/gmi`, message)
+		if err != nil {
+			panic(err)
+		}
+
+		if match {
 			return combo
 		}
 	}
@@ -138,11 +144,8 @@ loop1:
 func Respond(u *User, message string) {
 	u.Busy = true
 
+	t := time.Now()
 	rS := RandomNumber(2, 5)
-	time.Sleep(time.Duration(rS) * time.Second)
-	Say(u.Name, message)
-	u.LastSentEmote = message
-
 	var waitTime int
 
 	if Config.IntervalMin == Config.IntervalMax {
@@ -151,15 +154,17 @@ func Respond(u *User, message string) {
 		waitTime = RandomNumber(Config.IntervalMin, Config.IntervalMax)
 	}
 
-	t := time.Now()
-
 	PrintSuccess(Instructions{
 		Channel: u.Name,
 		Emote:   message,
-		Note:    fmt.Sprintf("Delay: %ds | Cooldown: %dm\n%d:%0d", rS, waitTime, t.Hour(), t.Minute()),
+		Note:    fmt.Sprintf("Delay: %ds | Cooldown: %s\n%d:%0d", rS, secondsToMinutes(waitTime), t.Hour(), t.Minute()),
 	})
 
-	time.Sleep(time.Duration(waitTime) * time.Minute)
+	time.Sleep(time.Duration(rS) * time.Second)
+	Say(u.Name, message)
+	u.LastSentEmote = message
+
+	time.Sleep(time.Duration(waitTime))
 
 	u.Busy = false
 }
