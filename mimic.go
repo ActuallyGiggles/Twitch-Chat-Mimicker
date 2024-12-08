@@ -86,7 +86,7 @@ messageRange:
 						PrintWarning(Instructions{
 							Channel: user.Name,
 							Emote:   maxName,
-							Note:    fmt.Sprintf("Times Used: %d/%d | Sample Size: %d\n%d:%0d", maxValue, Config.MessageThreshold, Config.MessageSample, t.Hour(), t.Minute()),
+							Note:    fmt.Sprintf("Times Used: %d/%d | Sample Size: %d\n%d:%02d", maxValue, Config.MessageThreshold, Config.MessageSample, t.Hour(), t.Minute()),
 						})
 					}
 
@@ -98,12 +98,6 @@ messageRange:
 		}
 	}
 }
-
-// func printDetectedEmotes(user *User) {
-// 	for _, emoticon := range user.DetectedEmotes {
-// 		fmt.Printf("\t[%s] %s: %d/%d\n", user.Name, emoticon.Name, emoticon.Value, Config.MessageThreshold)
-// 	}
-// }
 
 func ParseEmote(message string) string {
 	// Parse for word letter combo
@@ -157,7 +151,7 @@ func Respond(u *User, message string) {
 	PrintSuccess(Instructions{
 		Channel: u.Name,
 		Emote:   message,
-		Note:    fmt.Sprintf("Delay: %ds | Cooldown: %s\n%d:%0d", rS, secondsToMinutes(waitTime), t.Hour(), t.Minute()),
+		Note:    fmt.Sprintf("Delay: %ds | Cooldown: %s\n%d:%02d", rS, secondsToMinutes(waitTime), t.Hour(), t.Minute()),
 	})
 
 	time.Sleep(time.Duration(rS) * time.Second)
