@@ -9,9 +9,8 @@ import (
 var (
 	C chan Message
 
-	Users        []User
-	Emotes       []string
-	EmoteAmounts EmoteAmountsStruct
+	Users  []User
+	Emotes []string
 )
 
 func main() {

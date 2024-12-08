@@ -12,6 +12,7 @@ import (
 )
 
 var (
+	EmoteAmounts   EmoteAmountsStruct
 	updatingEmotes bool
 
 	pb *pterm.ProgressbarPrinter
@@ -30,16 +31,16 @@ func getEmotes(isInit bool) {
 			pb.Increment()
 		}
 
-		EmoteAmounts.Emojis = getEmojis()
+		EmoteAmounts.Emojis += getEmojis()
 
 		// Get global emotes
-		EmoteAmounts.TwitchGlobal = getTwitchGlobalEmotes()
+		EmoteAmounts.TwitchGlobal += getTwitchGlobalEmotes()
 		pb.Increment()
-		EmoteAmounts.SevenTVGlobal = get7tvGlobalEmotes()
+		EmoteAmounts.SevenTVGlobal += get7tvGlobalEmotes()
 		pb.Increment()
-		EmoteAmounts.BetterTTVGlobal = getBttvGlobalEmotes()
+		EmoteAmounts.BetterTTVGlobal += getBttvGlobalEmotes()
 		pb.Increment()
-		EmoteAmounts.FFZGlobal = getFfzGlobalEmotes()
+		EmoteAmounts.FFZGlobal += getFfzGlobalEmotes()
 		pb.Increment()
 	}
 
@@ -50,27 +51,25 @@ func getEmotes(isInit bool) {
 
 	for i := 0; i < len(Users); i++ {
 		user := &Users[i]
-		EmoteAmounts.TwitchChannel = getTwitchChannelEmotes(user)
+		EmoteAmounts.TwitchChannel += getTwitchChannelEmotes(user)
 		if isInit {
 			pb.Increment()
 		}
 
-		EmoteAmounts.SevenTVChannel = get7tvChannelEmotes(user)
+		EmoteAmounts.SevenTVChannel += get7tvChannelEmotes(user)
 		if isInit {
 			pb.Increment()
 		}
-		EmoteAmounts.BetterTTVChannel = getBttvChannelEmotes(user)
+		EmoteAmounts.BetterTTVChannel += getBttvChannelEmotes(user)
 		if isInit {
 			pb.Increment()
 		}
 
-		EmoteAmounts.FFZChannel = getFfzChannelEmotes(user)
+		EmoteAmounts.FFZChannel += getFfzChannelEmotes(user)
 		if isInit {
 			pb.Increment()
 		}
 	}
-
-	//TODO: EMOJIS https://raw.githubusercontent.com/chalda-pnuzig/emojis.json/refs/heads/master/src/list.json
 
 	updatingEmotes = false
 }
