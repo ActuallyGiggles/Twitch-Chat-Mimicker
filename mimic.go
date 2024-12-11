@@ -102,7 +102,7 @@ messageRange:
 func ParseEmote(message string) string {
 	// Parse for word letter combo
 	for _, combo := range Config.WordLetterCombos {
-		match, err := regexp.MatchString(`/^`+combo+`$/gmi`, message)
+		match, err := regexp.MatchString(`^`+combo+`$gmi`, message)
 		if err != nil {
 			panic(err)
 		}
