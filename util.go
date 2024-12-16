@@ -47,6 +47,6 @@ func clearTerminal() {
 func secondsToMinutes(inSeconds int) string {
 	minutes := inSeconds / 60
 	seconds := inSeconds % 60
-	str := fmt.Sprintf("%d:%d", minutes, seconds)
+	str := fmt.Sprintf("%d:%02d", minutes, seconds)
 	return str
 }
