@@ -33,6 +33,10 @@ doAgain:
 	print("\033[H\033[2J")
 	if title == "Aborted" {
 		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgLightRed)).WithFullWidth().Println("Twitch Chat Mimicker " + title)
+	} else if title == "Set Up" {
+		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgLightBlue)).WithFullWidth().Println("Twitch Chat Mimicker " + title)
+	} else if title == "Initialization" {
+		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgLightBlue)).WithFullWidth().Println("Twitch Chat Mimicker " + title)
 	} else if title == "Started" {
 		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgGreen)).WithFullWidth().Println("Twitch Chat Mimicker " + title)
 
@@ -57,8 +61,6 @@ doAgain:
 				EmoteAmounts.FFZChannel)),
 			pterm.Gray(fmt.Sprintf("Emojis: %d", EmoteAmounts.Emojis)))
 
-	} else if title == "Set Up" {
-		pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgLightBlue)).WithFullWidth().Println("Twitch Chat Mimicker " + title)
 	}
 	pterm.Println()
 	pterm.Println()

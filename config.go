@@ -200,7 +200,7 @@ func configSetup() {
 
 func configInit() {
 	// Channels to join
-	Page("Set Up", func() bool {
+	Page("Initialization", func() bool {
 		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the channels in which the program should act in.\nExample: 'nmplol, xqc, sodapoppin'\n"))
 		pterm.Println()
 		pterm.Print(pterm.LightBlue("	--Channels To Join: "))

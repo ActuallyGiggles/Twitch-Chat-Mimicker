@@ -18,28 +18,24 @@ func main() {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGHUP)
 
-	// Show setup screen. Read config file, if no config file found, start setup process
-	Page("Setup", func() bool {
-		return true
-	})
+	// Read config file, if no config file found, start setup process
 	readConfig()
 
-	// Show initialization screen. Emote and live status processes
-	Page("Initialization", func() bool {
-		return true
-	})
+	// Emote and live status processes
 	configInit()
 	getEmotes(true)
 	go updateEmotes()
 	go getLiveStatuses()
 
-	// Show started screen. Start twitch IRC and Mimic processes
-	Page("Started", func() bool {
-		return true
-	})
+	// Start twitch IRC and Mimic processes
 	C := make(chan Message)
 	go Start(C)
 	go Mimic(C)
+
+	// Show started screen.
+	Page("Started", func() bool {
+		return true
+	})
 
 	<-sc
 	// Show aborted screen
