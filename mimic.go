@@ -158,7 +158,7 @@ func Respond(u *User, message string) {
 	Say(u.Name, message)
 	u.LastSentEmote = message
 
-	time.Sleep(time.Duration(waitTime))
+	time.Sleep(time.Duration(waitTime) * time.Second)
 
 	u.Busy = false
 }
