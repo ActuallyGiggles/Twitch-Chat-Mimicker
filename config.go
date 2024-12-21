@@ -86,24 +86,6 @@ func configSetup() {
 		return true
 	})
 
-	// Channels
-	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the channels in which the program should act in.\nExample: 'nmplol, xcq, sodapoppin'\n"))
-		pterm.Println()
-		pterm.Print(pterm.LightBlue("	--Channels To Join: "))
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
-		channels := strings.Split(strings.ToLower(scanner.Text()), ", ")
-		if strings.Trim(channels[0], " ") == "" {
-			pterm.Println()
-			pterm.Println()
-			pterm.Error.Println("No channels entered!")
-			return false
-		}
-		Config.Channels = append(Config.Channels, channels...)
-		return true
-	})
-
 	// Blacklisted Emotes
 	Page("Set Up", func() bool {
 		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the emotes that you want blacklisted.\n\nExample: 'TriHard, KEKW, ResidentSleeper'"))
@@ -209,6 +191,29 @@ func configSetup() {
 			return false
 		}
 		Config.AllowConsecutiveDuplicates = decision
+		return true
+	})
+
+	writeConfig()
+	clearTerminal()
+}
+
+func configInit() {
+	// Channels to join
+	Page("Set Up", func() bool {
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Specify the channels in which the program should act in.\nExample: 'nmplol, xqc, sodapoppin'\n"))
+		pterm.Println()
+		pterm.Print(pterm.LightBlue("	--Channels To Join: "))
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		channels := strings.Split(strings.ToLower(scanner.Text()), ", ")
+		if strings.Trim(channels[0], " ") == "" {
+			pterm.Println()
+			pterm.Println()
+			pterm.Error.Println("No channels entered!")
+			return false
+		}
+		Config.Channels = channels
 		return true
 	})
 
