@@ -5,6 +5,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/pterm/pterm"
 )
 
 func Mimic(C chan Message) {
@@ -48,7 +50,7 @@ messageRange:
 					}
 
 					if emote.Value >= Config.MessageThreshold {
-						//fmt.Println("responding")
+						// fmt.Println("responding")
 						go Respond(user, emote.Name)
 						user.Messages = 0
 						user.DetectedEmotes = nil
@@ -83,11 +85,10 @@ messageRange:
 					t := time.Now()
 
 					if maxValue > 1 {
-						PrintWarning(Instructions{
-							Channel: user.Name,
-							Emote:   maxName,
-							Note:    fmt.Sprintf("Times Used: %d/%d | Sample Size: %d\n%d:%02d", maxValue, Config.MessageThreshold, Config.MessageSample, t.Hour(), t.Minute()),
-						})
+						// fmt.Println("warning")
+						pterm.Warning.Printf("%-20s     %s\n%s", strings.ToUpper(user.Name), maxName, pterm.Gray(fmt.Sprintf("%d:%02d | Times Used: %d/%d | Sample Size: %d", t.Hour(), t.Minute(), maxValue, Config.MessageThreshold, Config.MessageSample)))
+						pterm.Println()
+						pterm.Println()
 					}
 
 					//fmt.Println("starting new sample")
@@ -139,7 +140,6 @@ func Respond(u *User, message string) {
 	u.Busy = true
 
 	t := time.Now()
-	rS := RandomNumber(2, 5)
 	var waitTime int
 
 	if Config.IntervalMin == Config.IntervalMax {
@@ -148,15 +148,19 @@ func Respond(u *User, message string) {
 		waitTime = RandomNumber(Config.IntervalMin, Config.IntervalMax)
 	}
 
-	PrintSuccess(Instructions{
-		Channel: u.Name,
-		Emote:   message,
-		Note:    fmt.Sprintf("Delay: %ds | Cooldown: %s\n%d:%02d", rS, secondsToMinutes(waitTime), t.Hour(), t.Minute()),
-	})
+	pterm.Success.Printf("%-20s     %s\n%s", strings.ToUpper(u.Name), message, pterm.Sprintf(pterm.Gray("%d:%02d | Cooldown: %s"), t.Hour(), t.Minute(), secondsToMinutes(waitTime)))
+	pterm.Println()
+	pterm.Println()
 
-	time.Sleep(time.Duration(rS) * time.Second)
 	Say(u.Name, message)
 	u.LastSentEmote = message
+
+	// countdown, _ := pterm.DefaultArea.WithRemoveWhenDone().Start(pterm.Gray("Waiting for " + secondsToMinutes(waitTime) + " seconds..."))
+	// for i := waitTime; i >= 0; i-- {
+	// 	countdown.Update(pterm.Gray("Waiting for " + secondsToMinutes(i) + " seconds..."))
+	// 	time.Sleep(time.Second)
+	// }
+	// countdown.Stop()
 
 	time.Sleep(time.Duration(waitTime) * time.Second)
 

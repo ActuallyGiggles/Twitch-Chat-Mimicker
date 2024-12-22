@@ -12,13 +12,6 @@ var (
 	Config = Configuration{}
 )
 
-func addUser(user string) {
-	u := User{
-		Name: user,
-	}
-	Users = append(Users, u)
-}
-
 func RandomNumber(min, max int) int {
 	var result int
 	switch {

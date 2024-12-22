@@ -1,5 +1,7 @@
 package main
 
+import "time"
+
 type Configuration struct {
 	Name     string
 	OAuth    string
@@ -153,4 +155,16 @@ type StreamStatusActual struct {
 type Message struct {
 	Channel string
 	Message string
+}
+
+type Instructions struct {
+	Channel string
+	Emote   string
+
+	Note      string
+	Delay     int
+	Cooldown  int
+	TimeStamp time.Time
+
+	Error bool
 }

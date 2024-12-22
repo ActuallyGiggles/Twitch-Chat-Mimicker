@@ -17,16 +17,20 @@ func readConfig() {
 		f.Close()
 		return
 	}
-	defer f.Close()
 
 	err = json.NewDecoder(f).Decode(&Config)
 	if err != nil {
 		panic(err)
 	}
 
-	for _, channel := range Config.Channels {
-		addUser(channel)
-	}
+	f.Close()
+
+	// for _, channel := range Config.Channels {
+	// 	u := User{
+	// 		Name: channel,
+	// 	}
+	// 	Users = append(Users, u)
+	// }
 }
 
 func writeConfig() {
@@ -34,7 +38,6 @@ func writeConfig() {
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
 
 	c, err := json.MarshalIndent(Config, "", " ")
 	if err != nil {
@@ -45,6 +48,8 @@ func writeConfig() {
 	if err != nil {
 		panic(err)
 	}
+
+	f.Close()
 
 	readConfig()
 }
@@ -214,6 +219,14 @@ func configInit() {
 			return false
 		}
 		Config.Channels = channels
+
+		for _, channel := range Config.Channels {
+			u := User{
+				Name: channel,
+			}
+			Users = append(Users, u)
+		}
+
 		return true
 	})
 
