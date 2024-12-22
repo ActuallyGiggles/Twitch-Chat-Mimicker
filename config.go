@@ -24,13 +24,6 @@ func readConfig() {
 	}
 
 	f.Close()
-
-	// for _, channel := range Config.Channels {
-	// 	u := User{
-	// 		Name: channel,
-	// 	}
-	// 	Users = append(Users, u)
-	// }
 }
 
 func writeConfig() {

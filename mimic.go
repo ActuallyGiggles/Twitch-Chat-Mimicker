@@ -148,10 +148,13 @@ func Respond(u *User, message string) {
 		waitTime = RandomNumber(Config.IntervalMin, Config.IntervalMax)
 	}
 
-	pterm.Success.Printf("%-20s     %s\n%s", strings.ToUpper(u.Name), message, pterm.Sprintf(pterm.Gray("%d:%02d | Cooldown: %s"), t.Hour(), t.Minute(), secondsToMinutes(waitTime)))
+	delay := RandomNumber(0, 5)
+
+	pterm.Success.Printf("%-20s     %s\n%s", strings.ToUpper(u.Name), message, pterm.Sprintf(pterm.Gray("%d:%02d | Delay %ds | Cooldown: %s"), delay, t.Hour(), t.Minute(), secondsToMinutes(waitTime)))
 	pterm.Println()
 	pterm.Println()
 
+	time.Sleep(time.Duration(delay))
 	Say(u.Name, message)
 	u.LastSentEmote = message
 
