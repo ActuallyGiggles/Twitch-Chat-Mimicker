@@ -102,15 +102,27 @@ func configSetup() {
 		return true
 	})
 
-	// Custom Words/Letters
+	// Custom Emote Word Combos
 	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Are there any words or letters that pair with emotes? Separate them with commas.\nExample: 'L OMEGALUL L, W H OMEGALUL, F'"))
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Are there any words or letters that pair with emotes? Separate them with commas.\nExample: 'L OMEGALUL L, W H OMEGALUL, CLM'"))
 		pterm.Println()
-		pterm.Print(pterm.LightBlue("	--Word/Letter combos: "))
+		pterm.Print(pterm.LightBlue("	--Emote Word Combos: "))
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
-		WordLetterCombos := strings.Split(scanner.Text(), ", ")
-		Config.WordLetterCombos = append(Config.WordLetterCombos, WordLetterCombos...)
+		EmoteWordCombos := strings.Split(scanner.Text(), ", ")
+		Config.EmoteWordCombos = append(Config.EmoteWordCombos, EmoteWordCombos...)
+		return true
+	})
+
+	// Custom Only Word Combos
+	Page("Set Up", func() bool {
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Are there any words or letters that are used by themselves? Separate them with commas.\nExample: 'F, +1, -1, L, W, CLM'"))
+		pterm.Println()
+		pterm.Print(pterm.LightBlue("	--Only Word Combos: "))
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		OnlyWordCombos := strings.Split(scanner.Text(), ", ")
+		Config.OnlyWordCombos = append(Config.OnlyWordCombos, OnlyWordCombos...)
 		return true
 	})
 

@@ -12,8 +12,8 @@ import (
 func Mimic(C chan Message) {
 messageRange:
 	for c := range C {
-		u := c.Channel
-		m := c.Message
+		channel := c.Channel
+		message := c.Message
 
 		//fmt.Println("message recieved")
 
@@ -24,7 +24,7 @@ messageRange:
 
 		for i := 0; i < len(Users); i++ {
 			user := &Users[i]
-			if user.Name == u {
+			if user.Name == channel {
 				//fmt.Println("found user")
 
 				if user.Busy || !user.IsLive {
@@ -32,8 +32,23 @@ messageRange:
 					continue messageRange
 				}
 
-				e := ParseEmote(m)
-				if e == user.LastSentEmote && !Config.AllowConsecutiveDuplicates {
+				var thingToSend string
+				emoteFound := ParseEmote(message)
+
+				// Low priority (not unique)
+				if emoteFound != "" {
+					thingToSend = emoteFound
+				}
+				// Medium priority (more unique than regular emote)
+				if onlyWordCombo := ParseOnlyWordCombo(message); onlyWordCombo != "" {
+					thingToSend = onlyWordCombo
+				}
+				// Top priority (very unique)
+				if emoteWordCombo := ParseEmoteWordCombo(emoteFound, message); emoteWordCombo != "" {
+					thingToSend = emoteWordCombo
+				}
+
+				if (thingToSend == user.LastSentEmote && !Config.AllowConsecutiveDuplicates) || thingToSend == "" {
 					continue messageRange
 				}
 
@@ -41,27 +56,27 @@ messageRange:
 
 				exists := false
 				for i := 0; i < len(user.DetectedEmotes); i++ {
-					emote := &user.DetectedEmotes[i]
+					potentialThingToSend := &user.DetectedEmotes[i]
 
-					if e == emote.Name {
+					if thingToSend == potentialThingToSend.Name {
 						//fmt.Println("found emote")
 						exists = true
-						emote.Value++
+						potentialThingToSend.Value++
 					}
 
-					if emote.Value >= Config.MessageThreshold {
+					if potentialThingToSend.Value >= Config.MessageThreshold {
 						// fmt.Println("responding")
-						go Respond(user, emote.Name)
+						go Respond(user, potentialThingToSend.Name)
 						user.Messages = 0
 						user.DetectedEmotes = nil
 						continue messageRange
 					}
 				}
 
-				if !exists && e != "" {
+				if !exists && emoteFound != "" {
 					//fmt.Println("emote doesn't exist, adding")
 					entry := Emote{
-						Name:  e,
+						Name:  emoteFound,
 						Value: 1,
 					}
 					user.DetectedEmotes = append(user.DetectedEmotes, entry)
@@ -100,9 +115,78 @@ messageRange:
 	}
 }
 
+// Returns one emote, or an only emote combo
 func ParseEmote(message string) string {
-	// Parse for word letter combo
-	for _, combo := range Config.WordLetterCombos {
+	sentenceSliced := strings.Split(message, " ")
+	var emotesSliced []string
+loop1:
+	// Find an emote
+	for _, word := range sentenceSliced {
+		for _, emote := range Emotes {
+			if word == emote {
+				for _, blacklisted := range Config.BlacklistEmotes {
+					// Ignore it if it's a blacklisted emote
+					if strings.EqualFold(blacklisted, emote) {
+						return ""
+					}
+				}
+
+				// Append the emote to an emotes to send list
+				emotesSliced = append(emotesSliced, emote)
+				continue loop1
+			} else {
+				if len(emotesSliced) > 0 {
+					return strings.Join(emotesSliced, " ")
+				}
+			}
+		}
+	}
+
+	// Send the emotes to use
+	if len(emotesSliced) > 0 {
+		return strings.Join(emotesSliced, " ")
+	}
+
+	// If no success, return nothing
+	return ""
+}
+
+// Returns an emote word combo (should account for words before, after, and both before and after emote)
+func ParseEmoteWordCombo(emote, message string) string {
+	if emote == "" || emote == message {
+		return ""
+	}
+
+	allWordsAroundEmote := strings.Split(message, emote)
+	var emoteWordComboToSend []string
+
+	// Add words before emote
+	if len(allWordsAroundEmote) > 0 {
+		for _, emoteWordCombo := range Config.EmoteWordCombos {
+			if emoteWordCombo == strings.TrimSpace(allWordsAroundEmote[0]) {
+				emoteWordComboToSend = append(emoteWordComboToSend, emoteWordCombo)
+			}
+		}
+	}
+
+	// Add emote
+	emoteWordComboToSend = append(emoteWordComboToSend, emote)
+
+	// Add words after emote
+	if len(allWordsAroundEmote) > 1 {
+		for _, emoteWordCombo := range Config.EmoteWordCombos {
+			if emoteWordCombo == strings.TrimSpace(allWordsAroundEmote[1]) {
+				emoteWordComboToSend = append(emoteWordComboToSend, emoteWordCombo)
+			}
+		}
+	}
+
+	return strings.Join(emoteWordComboToSend, " ")
+}
+
+// Returns an only word combo to send
+func ParseOnlyWordCombo(message string) string {
+	for _, combo := range Config.OnlyWordCombos {
 		match, err := regexp.MatchString(`(?i)^`+combo+`$`, message)
 		if err != nil {
 			panic(err)
@@ -113,31 +197,12 @@ func ParseEmote(message string) string {
 		}
 	}
 
-	sentenceSliced := strings.Split(message, " ")
-	var emotesSliced []string
-
-	// Parse for emote or emoji
-loop1:
-	for _, word := range sentenceSliced {
-		for _, emote := range Emotes {
-			if word == emote {
-				for _, blacked := range Config.BlacklistEmotes {
-					// Ignore messages with blacklisted emotes
-					if strings.EqualFold(blacked, emote) {
-						return ""
-					}
-				}
-				emotesSliced = append(emotesSliced, emote)
-				continue loop1
-			}
-		}
-	}
-
-	return strings.Join(emotesSliced, " ")
+	return ""
 }
 
 func Respond(u *User, message string) {
 	u.Busy = true
+	u.LastSentEmote = message
 
 	t := time.Now()
 	var waitTime int
@@ -150,13 +215,12 @@ func Respond(u *User, message string) {
 
 	delay := RandomNumber(0, 5)
 
-	pterm.Success.Printf("%-20s     %s\n%s", strings.ToUpper(u.Name), message, pterm.Sprintf(pterm.Gray("%d:%02d | Delay %ds | Cooldown: %s"), delay, t.Hour(), t.Minute(), secondsToMinutes(waitTime)))
+	pterm.Success.Printf("%-20s     %s\n%s", strings.ToUpper(u.Name), message, pterm.Sprintf(pterm.Gray("%d:%02d | Delay %ds | Cooldown: %s"), t.Hour(), t.Minute(), delay, secondsToMinutes(waitTime)))
 	pterm.Println()
 	pterm.Println()
 
-	time.Sleep(time.Duration(delay))
+	time.Sleep(time.Duration(delay) * time.Second)
 	Say(u.Name, message)
-	u.LastSentEmote = message
 
 	// countdown, _ := pterm.DefaultArea.WithRemoveWhenDone().Start(pterm.Gray("Waiting for " + secondsToMinutes(waitTime) + " seconds..."))
 	// for i := waitTime; i >= 0; i-- {

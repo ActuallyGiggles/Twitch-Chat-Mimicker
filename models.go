@@ -13,9 +13,10 @@ type Configuration struct {
 	MessageThreshold int
 	MessageSample    int
 
-	Channels         []string
-	BlacklistEmotes  []string
-	WordLetterCombos []string
+	Channels        []string
+	BlacklistEmotes []string
+	EmoteWordCombos []string
+	OnlyWordCombos  []string
 
 	AllowConsecutiveDuplicates bool
 }
