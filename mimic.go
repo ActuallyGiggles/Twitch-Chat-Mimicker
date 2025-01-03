@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"time"
 
@@ -163,7 +162,7 @@ func ParseEmoteWordCombo(emote, message string) string {
 	// Add words before emote
 	if len(allWordsAroundEmote) > 0 {
 		for _, emoteWordCombo := range Config.EmoteWordCombos {
-			if emoteWordCombo == strings.TrimSpace(allWordsAroundEmote[0]) {
+			if strings.EqualFold(emoteWordCombo, strings.TrimSpace(allWordsAroundEmote[0])) {
 				emoteWordComboToSend = append(emoteWordComboToSend, emoteWordCombo)
 			}
 		}
@@ -175,7 +174,7 @@ func ParseEmoteWordCombo(emote, message string) string {
 	// Add words after emote
 	if len(allWordsAroundEmote) > 1 {
 		for _, emoteWordCombo := range Config.EmoteWordCombos {
-			if emoteWordCombo == strings.TrimSpace(allWordsAroundEmote[1]) {
+			if strings.EqualFold(emoteWordCombo, strings.TrimSpace(allWordsAroundEmote[1])) {
 				emoteWordComboToSend = append(emoteWordComboToSend, emoteWordCombo)
 			}
 		}
@@ -187,14 +186,10 @@ func ParseEmoteWordCombo(emote, message string) string {
 // Returns an only word combo to send
 func ParseOnlyWordCombo(message string) string {
 	for _, combo := range Config.OnlyWordCombos {
-		match, err := regexp.MatchString(`(?i)^`+combo+`$`, message)
-		if err != nil {
-			panic(err)
-		}
-
-		if match {
+		if combo == strings.ToUpper(message) {
 			return combo
 		}
+
 	}
 
 	return ""
@@ -219,17 +214,20 @@ func Respond(u *User, message string) {
 	pterm.Println()
 	pterm.Println()
 
+	if len(Config.Channels) == 1 {
+		countdown, _ := pterm.DefaultArea.WithRemoveWhenDone().Start(pterm.Gray("Waiting for " + secondsToMinutes(waitTime+delay) + " seconds..."))
+		for i := waitTime + delay; i >= 0; i-- {
+			countdown.Update(pterm.Gray("Waiting for " + secondsToMinutes(i) + " seconds..."))
+			time.Sleep(time.Second)
+		}
+		countdown.Stop()
+	}
+
 	time.Sleep(time.Duration(delay) * time.Second)
 	Say(u.Name, message)
 
-	// countdown, _ := pterm.DefaultArea.WithRemoveWhenDone().Start(pterm.Gray("Waiting for " + secondsToMinutes(waitTime) + " seconds..."))
-	// for i := waitTime; i >= 0; i-- {
-	// 	countdown.Update(pterm.Gray("Waiting for " + secondsToMinutes(i) + " seconds..."))
-	// 	time.Sleep(time.Second)
-	// }
-	// countdown.Stop()
-
-	time.Sleep(time.Duration(waitTime) * time.Second)
-
+	if len(Config.Channels) > 1 {
+		time.Sleep(time.Duration(waitTime) * time.Second)
+	}
 	u.Busy = false
 }

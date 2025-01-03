@@ -237,4 +237,6 @@ func configInit() {
 
 	writeConfig()
 	clearTerminal()
+
+	Config.EmoteWordCombos = append(Config.EmoteWordCombos, Config.OnlyWordCombos...)
 }
