@@ -6,6 +6,9 @@ import (
 	"math/big"
 	"os"
 	"os/exec"
+	"time"
+
+	"github.com/pterm/pterm"
 )
 
 var (
@@ -42,4 +45,13 @@ func secondsToMinutes(inSeconds int) string {
 	seconds := inSeconds % 60
 	str := fmt.Sprintf("%d:%02d", minutes, seconds)
 	return str
+}
+
+func countdown(timeToWait int) {
+	countdown, _ := pterm.DefaultArea.WithRemoveWhenDone().Start(pterm.Gray("Waiting for " + secondsToMinutes(timeToWait) + " seconds..."))
+	for i := timeToWait; i >= 0; i-- {
+		countdown.Update(pterm.Gray("Waiting for " + secondsToMinutes(i) + " seconds..."))
+		time.Sleep(time.Second)
+	}
+	countdown.Stop()
 }

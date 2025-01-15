@@ -22,16 +22,19 @@ type Configuration struct {
 }
 
 type User struct {
-	Name           string
-	ID             string
-	IsLive         bool
-	Busy           bool
-	Messages       int
-	DetectedEmotes []Emote
-	LastSentEmote  string
+	Name          string
+	ID            string
+	IsLive        bool
+	Busy          bool
+	Messages      int
+	LastSentEmote string
+
+	WordsUsed      []string
+	Responses      map[string]int
+	LastSentPhrase string
 }
 
-type Emote struct {
+type Response struct {
 	Name  string
 	Value int
 }

@@ -14,35 +14,30 @@ messageRange:
 		channel := c.Channel
 		message := c.Message
 
-		//fmt.Println("message recieved")
-
 		if updatingEmotes {
-			//fmt.Println("updating emotes")
 			continue
 		}
 
 		for i := 0; i < len(Users); i++ {
 			user := &Users[i]
 			if user.Name == channel {
-				//fmt.Println("found user")
 
 				if user.Busy || !user.IsLive {
-					//fmt.Printf("%s busy: %t, %s live: %t\n", user.Name, user.Busy, user.Name, user.IsLive)
 					continue messageRange
 				}
 
 				var thingToSend string
-				emoteFound := ParseEmote(message)
 
 				// Low priority (not unique)
+				emoteFound := ParseEmote(message)
 				if emoteFound != "" {
 					thingToSend = emoteFound
 				}
-				// Medium priority (more unique than regular emote)
+				// Medium low priority (more unique than regular emote)
 				if onlyWordCombo := ParseOnlyWordCombo(message); onlyWordCombo != "" {
 					thingToSend = onlyWordCombo
 				}
-				// Top priority (very unique)
+				//  Medium high priority (very unique)
 				if emoteWordCombo := ParseEmoteWordCombo(emoteFound, message); emoteWordCombo != "" {
 					thingToSend = emoteWordCombo
 				}
@@ -51,63 +46,39 @@ messageRange:
 					continue messageRange
 				}
 
-				//fmt.Printf("parsed %s into -> \n\t%s\n", m, e)
+				user.Responses[thingToSend]++
 
-				exists := false
-				for i := 0; i < len(user.DetectedEmotes); i++ {
-					potentialThingToSend := &user.DetectedEmotes[i]
-
-					if thingToSend == potentialThingToSend.Name {
-						//fmt.Println("found emote")
-						exists = true
-						potentialThingToSend.Value++
-					}
-
-					if potentialThingToSend.Value >= Config.MessageThreshold {
-						// fmt.Println("responding")
-						go Respond(user, potentialThingToSend.Name)
-						user.Messages = 0
-						user.DetectedEmotes = nil
-						continue messageRange
-					}
-				}
-
-				if !exists && emoteFound != "" {
-					//fmt.Println("emote doesn't exist, adding")
-					entry := Emote{
-						Name:  emoteFound,
-						Value: 1,
-					}
-					user.DetectedEmotes = append(user.DetectedEmotes, entry)
+				if user.Responses[thingToSend] >= Config.MessageThreshold {
+					go Respond(user, thingToSend)
+					user.Messages = 0
+					user.Responses = make(map[string]int)
+					user.WordsUsed = nil
+					continue messageRange
 				}
 
 				user.Messages++
 
 				if user.Messages > Config.MessageSample {
-					//fmt.Println("the emote that could have been sent:")
-
 					var maxValue int
 					var maxName string
-					for i := 0; i < len(user.DetectedEmotes); i++ {
-						emote := &user.DetectedEmotes[i]
-						if emote.Value > maxValue {
-							maxValue = emote.Value
-							maxName = emote.Name
+					for name, value := range user.Responses {
+						if value > maxValue {
+							maxValue = value
+							maxName = name
 						}
 					}
 
 					t := time.Now()
 
 					if maxValue > 1 {
-						// fmt.Println("warning")
 						pterm.Warning.Printf("%-20s     %s\n%s", strings.ToUpper(user.Name), maxName, pterm.Gray(fmt.Sprintf("%d:%02d | Times Used: %d/%d | Sample Size: %d", t.Hour(), t.Minute(), maxValue, Config.MessageThreshold, Config.MessageSample)))
 						pterm.Println()
 						pterm.Println()
 					}
 
-					//fmt.Println("starting new sample")
 					user.Messages = 0
-					user.DetectedEmotes = nil
+					user.Responses = make(map[string]int)
+					user.WordsUsed = nil
 				}
 			}
 		}
@@ -193,41 +164,4 @@ func ParseOnlyWordCombo(message string) string {
 	}
 
 	return ""
-}
-
-func Respond(u *User, message string) {
-	u.Busy = true
-	u.LastSentEmote = message
-
-	t := time.Now()
-	var waitTime int
-
-	if Config.IntervalMin == Config.IntervalMax {
-		waitTime = Config.IntervalMin
-	} else {
-		waitTime = RandomNumber(Config.IntervalMin, Config.IntervalMax)
-	}
-
-	delay := RandomNumber(0, 5)
-
-	pterm.Success.Printf("%-20s     %s\n%s", strings.ToUpper(u.Name), message, pterm.Sprintf(pterm.Gray("%d:%02d | Delay %ds | Cooldown: %s"), t.Hour(), t.Minute(), delay, secondsToMinutes(waitTime)))
-	pterm.Println()
-	pterm.Println()
-
-	if len(Config.Channels) == 1 {
-		countdown, _ := pterm.DefaultArea.WithRemoveWhenDone().Start(pterm.Gray("Waiting for " + secondsToMinutes(waitTime+delay) + " seconds..."))
-		for i := waitTime + delay; i >= 0; i-- {
-			countdown.Update(pterm.Gray("Waiting for " + secondsToMinutes(i) + " seconds..."))
-			time.Sleep(time.Second)
-		}
-		countdown.Stop()
-	}
-
-	time.Sleep(time.Duration(delay) * time.Second)
-	Say(u.Name, message)
-
-	if len(Config.Channels) > 1 {
-		time.Sleep(time.Duration(waitTime) * time.Second)
-	}
-	u.Busy = false
 }

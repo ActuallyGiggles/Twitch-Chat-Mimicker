@@ -21,8 +21,12 @@ func main() {
 	// Read config file, if no config file found, start setup process
 	readConfig()
 
+	// Verify ClientID and OAuth
+	VerifyCredentials()
+
 	// Emote and live status processes
 	configInit()
+
 	getEmotes(true)
 	go updateEmotes()
 	go getLiveStatuses()
@@ -31,6 +35,7 @@ func main() {
 	C := make(chan Message)
 	go Start(C)
 	go Mimic(C)
+	//go MimicNew(C)
 
 	// Show started screen.
 	Page("Started", func() bool {

@@ -80,7 +80,7 @@ func updateEmotes() {
 	}
 }
 
-func GetBroadcaster(user *User) {
+func GetBroadcaster(user *User) (success bool) {
 	url := "https://api.twitch.tv/helix/users?login=" + user.Name
 
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte(``)))
@@ -98,8 +98,9 @@ func GetBroadcaster(user *User) {
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != 200 {
-		println()
-		log.Printf("GetBroadcater(%s) is not OK\n%s\n", user.Name, string(body))
+		log.Println("GetBroadcaster status code:", resp.StatusCode)
+		log.Println(string(body))
+		return false
 	}
 
 	broadcaster := Broadcaster[Data]{}
@@ -109,6 +110,8 @@ func GetBroadcaster(user *User) {
 	for _, v := range broadcaster.Data {
 		user.ID = v.ID
 	}
+
+	return true
 }
 
 func getTwitchGlobalEmotes() (number int) {

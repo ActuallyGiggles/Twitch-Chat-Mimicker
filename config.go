@@ -48,41 +48,9 @@ func writeConfig() {
 }
 
 func configSetup() {
-	// Name
-	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Enter the Twitch account name you will be using.\n"))
-		pterm.Println()
-		pterm.Print(pterm.LightBlue("	--Account Name: "))
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
-		name := strings.ToLower(scanner.Text())
-		Config.Name = name
-		return true
-	})
-
-	// Client ID
-	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Obtaining your ClientID is necessary to gather Twitch emotes.\nHere is a link to get it: ", pterm.Underscore.Sprintf("https://dev.twitch.tv/console\n"), "\n\nSteps:\n1. Give your application a name.\n2. Set the redirect URL to (https://twitchapps.com/tokengen/).\n3. Choose the chatbot category.\n4. Copy and paste the Client ID here.\n"))
-		pterm.Println()
-		pterm.Print(pterm.LightBlue("	--Account Client ID: "))
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
-		clientID := strings.ToLower(scanner.Text())
-		Config.ClientID = clientID
-		return true
-	})
-
-	// OAuth
-	Page("Set Up", func() bool {
-		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Obtaining your OAuth is necessary to connect to Twitch chatrooms as yourself.\nHere is a link to get it: ", pterm.Underscore.Sprintf("https://twitchapps.com/tokengen/\n"), "\n\nSteps:\n1. Paste in the Client ID\n2. For scopes, type in: 'chat:read chat:edit'.\n3. Click connect and copy and paste the OAuth Token here.\n"))
-		pterm.Println()
-		pterm.Print(pterm.LightBlue("	--Account OAuth: "), pterm.White("oauth:"))
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
-		oauth := strings.ToLower(scanner.Text())
-		Config.OAuth = oauth
-		return true
-	})
+	ObtainName()
+	ObtainClientID()
+	ObtainOAuth()
 
 	// Blacklisted Emotes
 	Page("Set Up", func() bool {
@@ -239,4 +207,74 @@ func configInit() {
 	clearTerminal()
 
 	Config.EmoteWordCombos = append(Config.EmoteWordCombos, Config.OnlyWordCombos...)
+
+	for i := 0; i < len(Users); i++ {
+		user := &Users[i]
+		user.Responses = make(map[string]int)
+	}
+}
+
+func VerifyCredentials() {
+	user := User{
+		Name: Config.Name,
+	}
+	success := GetBroadcaster(&user)
+
+	if success {
+		return
+	}
+
+	Page("Set Up", func() bool {
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Looks like either your ClientID and/or OAuth is invalid or expired. Let's do that again!"))
+		countdown(5)
+		return true
+	})
+
+	ObtainName()
+	ObtainClientID()
+	ObtainOAuth()
+
+	writeConfig()
+	clearTerminal()
+	VerifyCredentials()
+}
+
+func ObtainName() {
+	// Name
+	Page("Set Up", func() bool {
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Enter the Twitch account name you will be using.\n"))
+		pterm.Println()
+		pterm.Print(pterm.LightBlue("	--Account Name: "))
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		name := strings.ToLower(scanner.Text())
+		Config.Name = name
+		return true
+	})
+}
+
+func ObtainOAuth() {
+	Page("Set Up", func() bool {
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Obtaining your OAuth is necessary to connect to Twitch chatrooms as yourself.\nHere is a link to get it: ", pterm.Underscore.Sprintf("https://twitchapps.com/tokengen/\n"), "\n\nSteps:\n1. Paste in the Client ID\n2. For scopes, type in: 'chat:read chat:edit'.\n3. Click connect and copy and paste the OAuth Token here.\n"))
+		pterm.Println()
+		pterm.Print(pterm.LightBlue("	--Account OAuth: "), pterm.White("oauth:"))
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		oauth := strings.ToLower(scanner.Text())
+		Config.OAuth = oauth
+		return true
+	})
+}
+
+func ObtainClientID() {
+	Page("Set Up", func() bool {
+		pterm.DefaultCenter.WithCenterEachLineSeparately().Println(pterm.LightBlue("Obtaining your ClientID is necessary to gather Twitch emotes.\nHere is a link to get it: ", pterm.Underscore.Sprintf("https://dev.twitch.tv/console\n"), "\n\nSteps:\n1. Give your application a name.\n2. Set the redirect URL to (https://twitchapps.com/tokengen/).\n3. Choose the chatbot category.\n4. Copy and paste the Client ID here.\n"))
+		pterm.Println()
+		pterm.Print(pterm.LightBlue("	--Account Client ID: "))
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		clientID := strings.ToLower(scanner.Text())
+		Config.ClientID = clientID
+		return true
+	})
 }

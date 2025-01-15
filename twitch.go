@@ -1,7 +1,11 @@
 package main
 
 import (
+	"strings"
+	"time"
+
 	"github.com/gempir/go-twitch-irc/v3"
+	"github.com/pterm/pterm"
 )
 
 var client *twitch.Client
@@ -44,4 +48,34 @@ func Join(channel string) {
 // Depart departs a twitch chatroom.
 func Depart(channel string) {
 	client.Depart(channel)
+}
+
+func Respond(u *User, message string) {
+	u.Busy = true
+	u.LastSentEmote = message
+
+	t := time.Now()
+	var waitTime int
+
+	if Config.IntervalMin == Config.IntervalMax {
+		waitTime = Config.IntervalMin
+	} else {
+		waitTime = RandomNumber(Config.IntervalMin, Config.IntervalMax)
+	}
+
+	delay := RandomNumber(0, 5)
+
+	pterm.Success.Printf("%-20s     %s\n%s", strings.ToUpper(u.Name), message, pterm.Sprintf(pterm.Gray("%d:%02d | Delay %ds | Cooldown: %s"), t.Hour(), t.Minute(), delay, secondsToMinutes(waitTime)))
+	pterm.Println()
+	pterm.Println()
+
+	if len(Config.Channels) == 1 {
+		go countdown(waitTime + delay)
+	}
+
+	time.Sleep(time.Duration(delay) * time.Second)
+	Say(u.Name, message)
+	time.Sleep(time.Duration(waitTime+1) * time.Second)
+
+	u.Busy = false
 }
